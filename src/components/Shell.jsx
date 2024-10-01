@@ -3,9 +3,15 @@ import { useState } from 'react'
 
 const Shell = (props) =>
 {
-    return <div className="shellDiv" style={{ width: "70%", height: "100%"}}>
+    return <div className="shellDiv">
                 <div className='shellCommands' style={{padding:"2em"}}>
-                    <p style={{color:"#F7DBA7"}}>Starting Shell Learning Session... <br></br>[ user@ShellLearning ~] $</p>
+                    <div style={{color:"#F7DBA7"}}>
+                        <div>Starting Shell Learning Session...</div>
+                        <div style={{ display: 'flex'}}>
+                            <p>[ user@ShellLearning ~] $</p>
+                            <input type='text'></input>
+                        </div>
+                    </div>
                 </div>
             </div>
 }
