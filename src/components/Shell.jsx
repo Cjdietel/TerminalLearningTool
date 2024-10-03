@@ -9,7 +9,7 @@ const Shell = (props) =>
                         <div>Starting Shell Learning Session...</div>
                         <div style={{ display: 'flex'}}>
                             <p>[ user@ShellLearning ~] $</p>
-                            <input type='text'></input>
+                            <input type></input>
                         </div>
                     </div>
                 </div>
