@@ -16,8 +16,9 @@
 // }
 
 // export default App
-import React from 'react';
+import React, { useState } from 'react';
 import Terminal from './components/Terminal';
+import JSzip from 'jszip'
 import './App.css'
 
 function App() {
