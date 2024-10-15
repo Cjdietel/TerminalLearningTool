@@ -62,6 +62,7 @@ const Terminal = () => {
   const handleInput = (e) => {
     if (e.key === 'Enter') {
       setOutput([...output, `(${userName}@TerminalLearningTool)-[${dirLoc}]$ ${input}`]);
+      alert(input);
       setInput('');
     }
   };

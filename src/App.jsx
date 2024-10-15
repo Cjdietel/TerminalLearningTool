@@ -18,6 +18,7 @@
 // export default App
 import React from 'react';
 import Terminal from './components/Terminal';
+import ZipButton from './components/ZipButton';
 import './App.css'
 
 function App() {
@@ -34,6 +35,7 @@ function App() {
           <div style={{height: "100%", width: "100%", backgroundColor: "#C57B57"}}></div>
         </div>
       </div>
+      <ZipButton />
     </div>
     // <div style={{height:'100%', border:'1px solid lime'}}></div>
   );
