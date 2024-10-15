@@ -16,7 +16,7 @@
 // }
 
 // export default App
-import React from 'react';
+import React, { useState } from 'react';
 import Terminal from './components/Terminal';
 import ZipButton from './components/ZipButton';
 import './App.css'
