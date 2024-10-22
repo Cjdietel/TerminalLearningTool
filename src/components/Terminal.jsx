@@ -1,67 +1,29 @@
 import React, { useState, useEffect} from 'react';
 import '../Terminal.css';
-// fs structure
-// [
-//     {
-//         "home": 
-//         {
-//             type: "directory",
-//             content: 
-//             {
-//                 "documents" : 
-//                 {
-//                     type: "directory",
-//                     content: 
-//                     {
-//                         "test1.txt": 
-//                         {
-//                             type: "file",
-//                             content: "hello world"
-//                         }
-//                     }
-//                 },
-//                 "downloads": 
-//                 {
-//                     type: "directory",
-//                     content: 
-//                     {
-//                         "test1.txt": 
-//                         {
-//                             type: "file",
-//                             content: "hello world"
-//                         },
-//                         "test2.txt": 
-//                         {
-//                             type: "file",
-//                             content: "hello world2"
-//                         }
-//                     }
-                
-//                 }
-//             }
-//         }
-//     }
-// ]
 
 
 
-const Terminal = () => {
-  const [dirLoc, setDirLoc] = useState('~/Documents')
+
+const Terminal = (props) => {
+
+  const { currentDirectory } = props
+  // const [dirLoc, setDirLoc] = useState(Object.keys(fs))
   const [userName, setUserName] = useState('cjdietel')
-  const [cmdLine, setCmdLine] = useState(`(${userName}@TerminalLearningTool)-[${dirLoc}]$`)
+  const [cmdLine, setCmdLine] = useState(`(${userName}@TerminalLearningTool)-[${currentDirectory}]$`)
   const [output, setOutput] = useState([]);
   const [input, setInput] = useState('');
+
+  useEffect(() => {
+    console.log(currentDirectory)
+  }, [])
 
 
 //   const inputRef = useRef(null);
 
-  useEffect(() => {
-    // inputRef.current.focus();
-  }, []);
   
   const handleInput = (e) => {
     if (e.key === 'Enter') {
-      setOutput([...output, `(${userName}@TerminalLearningTool)-[${dirLoc}]$ ${input}`]);
+      setOutput([...output, `(${userName}@TerminalLearningTool)-[${currentDirectory}]$ ${input}`]);
       //alert(input);
       setInput('');
     }
@@ -75,7 +37,7 @@ const Terminal = () => {
         ))}
       </div>
       <div className="input-container">
-        <div style={{ paddingRight: "0.5em"}}>{`(${userName}@TerminalLearningTool)-[${dirLoc}]$`}</div>
+        <div style={{ paddingRight: "0.5em"}}>{`(${userName}@TerminalLearningTool)-[${currentDirectory}]$`}</div>
         <div style={{ overflowWrap: "anywhere", flexGrow: "1"}}>
             <input
             //   ref={inputRef}

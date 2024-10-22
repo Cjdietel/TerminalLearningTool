@@ -22,11 +22,13 @@ import './App.css'
 import { useState, useEffect, React } from 'react';
 import JSZip from 'jszip';
 import JSZipUtils from 'jszip-utils';
+import config from './config.json'
 
+
+let fs = {}
 function createFSObject() {
-  let fs = {}
 
-    JSZipUtils.getBinaryContent('ShellAdventure-main.zip', function(err, data) { // JSZip website -- for testing purposes we use ShellAdventure-main.zip or zipped.zip, but this can be changed to your zip of a file system
+    JSZipUtils.getBinaryContent(config.zippedFolder, function(err, data) { // JSZip website -- for testing purposes we use ShellAdventure-main.zip or zipped.zip, but this can be changed to your zip of a file system
         if(err) {
             throw err; 
         }
@@ -54,17 +56,23 @@ function createFSObject() {
                     }
                 }
             }) 
-            console.log(fs)
         });
     });
 }
 
 function App() {
+
+  useEffect(() => {
+    createFSObject()
+  }, [])
+
+  const [currentDirectory, setCurrentDirectory] = useState('/')
+  console.log(currentDirectory)
+
   return (
     <div className="App" style={{ overflowY: "none"}}>
       <div style={{ width:"70%", height:"100%", flexGrow: "0"}}>
-        <Terminal />
-        <pre>{createFSObject()}</pre>
+        <Terminal currentDirectory={currentDirectory}/>
       </div>
       <div style={{ flexGrow: "1", display: "flex", flexDirection: "column",  backgroundColor: "black"}}>
         <div style={{ height: "50%", width: "100%", padding: "0.2em"}}>
