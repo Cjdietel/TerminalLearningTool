@@ -26,47 +26,69 @@ import config from './config.json'
 
 
 let fs = {}
-function createFSObject() {
 
-    JSZipUtils.getBinaryContent(config.zippedFolder, function(err, data) { // JSZip website -- for testing purposes we use ShellAdventure-main.zip or zipped.zip, but this can be changed to your zip of a file system
-        if(err) {
-            throw err; 
-        }
-        JSZip.loadAsync(data).then(function (data) {
-            data.forEach(function(path, entry){ // even though path is not used, it is needed for the function to work
-                let filePathArray 
-                if (entry.name.endsWith('/')) {
-                    filePathArray = entry.name.slice(0, -1).split('/'); // removes the "empty directory" created with the ending slash
+function createFSObject() {
+  return new Promise((resolve, reject) => {
+      JSZipUtils.getBinaryContent(config.zippedFolder, function (err, data) {
+          if (err) {
+              return reject(err); // Reject the promise if there is an error
+          }
+
+          JSZip.loadAsync(data).then(function (zip) {
+              const fs = {}; // Initialize the file system object
+              const promises = []; // Array to track asynchronous operations
+
+              zip.forEach(function (path, entry) {
+                  let filePathArray;
+                  if (entry.name.endsWith('/')) {
+                      filePathArray = entry.name.slice(0, -1).split('/'); // Removes the empty directory created with the ending slash
                   } else {
-                    filePathArray = entry.name.split('/');
+                      filePathArray = entry.name.split('/');
                   }
-                let currentLevel = fs // start at root
-                for (let i = 0; i < filePathArray.length; i++) {
-                    const pathPart = filePathArray[i]
-                    if (pathPart.includes('.')) {
-                        entry.async("string").then((content) => { // loads the contents of the file
-                          currentLevel[pathPart] = content;
-                        });
-                    }
-                    else {
-                        if (!currentLevel[pathPart]) {
-                            currentLevel[pathPart] = {};
-                        }
-                        currentLevel = currentLevel[pathPart]
-                    }
-                }
-            }) 
-        });
-    });
+
+                  let currentLevel = fs; // Start at root level of fs object
+                  for (let i = 0; i < filePathArray.length; i++) {
+                      const pathPart = filePathArray[i];
+
+                      // If the path part contains a dot, assume it's a file
+                      if (pathPart.includes('.')) {
+                          // Push the file load operation into the promises array
+                          const filePromise = entry.async("string").then((content) => {
+                              currentLevel[pathPart] = content; // Assign file content to the correct path
+                          });
+                          promises.push(filePromise); // Track the promise
+                      } else {
+                          // If it's a folder, create it if it doesn't exist
+                          if (!currentLevel[pathPart]) {
+                              currentLevel[pathPart] = {};
+                          }
+                          currentLevel = currentLevel[pathPart]; // Navigate into the folder
+                      }
+                  }
+              });
+
+              // Once all promises are resolved, resolve the main promise with the fs object
+              Promise.all(promises)
+                  .then(() => resolve(fs)) // Resolve with the fully populated file system object
+                  .catch(reject); // Reject the promise in case of any errors
+          });
+      });
+  });
 }
 
 function App() {
 
   useEffect(() => {
     createFSObject()
+    .then((fs) => {
+        console.log(fs.zipped.folder1);
+    })
+    .catch((error) => {
+        console.error("Error creating file system object:", error);
+    });
   }, [])
 
-  const [currentDirectory, setCurrentDirectory] = useState('/')
+  const [currentDirectory, setCurrentDirectory] = useState('/Home')
   console.log(currentDirectory)
 
   return (
