@@ -1,114 +1,133 @@
-// import { useState } from 'react'
-// import './App.css'
-// import ProblemPanel from './components/ProblemPanel'
-
-// import Shell from './components/Shell'
-
-
-// function App() {
-
-//   return (
-//     <div style={{ width: "100%", height: "100%", display: 'flex'}}>
-//       <Shell />
-//       <ProblemPanel />
-//     </div>
-//   )
-// }
-
-// export default App
-
 import Terminal from './components/Terminal';
-import './App.css'
-import { useState, useEffect, React } from 'react';
+import './App.css';
+import { useState, useEffect } from 'react';
 import JSZip from 'jszip';
 import JSZipUtils from 'jszip-utils';
-import config from './config.json'
-
-
-let fs = {}
-
-function createFSObject() {
-  return new Promise((resolve, reject) => {
-      JSZipUtils.getBinaryContent(config.zippedFolder, function (err, data) {
-          if (err) {
-              return reject(err); // Reject the promise if there is an error
-          }
-
-          JSZip.loadAsync(data).then(function (zip) {
-              const fs = {}; // Initialize the file system object
-              const promises = []; // Array to track asynchronous operations
-
-              zip.forEach(function (path, entry) {
-                  let filePathArray;
-                  if (entry.name.endsWith('/')) {
-                      filePathArray = entry.name.slice(0, -1).split('/'); // Removes the empty directory created with the ending slash
-                  } else {
-                      filePathArray = entry.name.split('/');
-                  }
-
-                  let currentLevel = fs; // Start at root level of fs object
-                  for (let i = 0; i < filePathArray.length; i++) {
-                      const pathPart = filePathArray[i];
-
-                      // If the path part contains a dot, assume it's a file
-                      if (pathPart.includes('.')) {
-                          // Push the file load operation into the promises array
-                          const filePromise = entry.async("string").then((content) => {
-                              currentLevel[pathPart] = content; // Assign file content to the correct path
-                          });
-                          promises.push(filePromise); // Track the promise
-                      } else {
-                          // If it's a folder, create it if it doesn't exist
-                          if (!currentLevel[pathPart]) {
-                              currentLevel[pathPart] = {};
-                          }
-                          currentLevel = currentLevel[pathPart]; // Navigate into the folder
-                      }
-                  }
-              });
-
-              // Once all promises are resolved, resolve the main promise with the fs object
-              Promise.all(promises)
-                  .then(() => resolve(fs)) // Resolve with the fully populated file system object
-                  .catch(reject); // Reject the promise in case of any errors
-          });
-      });
-  });
-}
+import config from './config.json';
 
 function App() {
+  const [fs, setFs] = useState(null); // The full file system
+  const [currentDirectory, setCurrentDirectory] = useState(null); // The current directory object
+  const [currentPath, setCurrentPath] = useState("/"); // String to hold the current path
+  const [output, setOutput] = useState([]); // Output state to hold terminal messages
+
+  function createFSObject() {
+    return new Promise((resolve, reject) => {
+      JSZipUtils.getBinaryContent(config.zippedFolder, function (err, data) {
+        if (err) {
+          return reject(err);
+        }
+        JSZip.loadAsync(data).then(function (zip) {
+          const fs = {};
+          const promises = [];
+
+          zip.forEach(function (path, entry) {
+            let filePathArray = entry.name.endsWith('/')
+              ? entry.name.slice(0, -1).split('/')
+              : entry.name.split('/');
+
+            let currentLevel = fs;
+            for (let i = 0; i < filePathArray.length; i++) {
+              const pathPart = filePathArray[i];
+
+              if (pathPart.includes('.')) {
+                const filePromise = entry.async("string").then((content) => {
+                  currentLevel[pathPart] = content;
+                });
+                promises.push(filePromise);
+              } else {
+                if (!currentLevel[pathPart]) {
+                  currentLevel[pathPart] = {};
+                }
+                currentLevel = currentLevel[pathPart];
+              }
+            }
+          });
+
+          Promise.all(promises)
+            .then(() => resolve(fs))
+            .catch(reject);
+        });
+      });
+    });
+  }
 
   useEffect(() => {
     createFSObject()
-    .then((fs) => {
-        console.log(fs.zipped.folder1);
-    })
-    .catch((error) => {
-        console.error("Error creating file system object:", error);
-    });
-  }, [])
+      .then((fileSystem) => {
+        setFs(fileSystem);
+        setCurrentDirectory(fileSystem); // Start at root
+      })
+      .catch((error) => {
+        addOutput(`Error creating file system object: ${error.message}`);
+      });
+  }, []);
 
-  const [currentDirectory, setCurrentDirectory] = useState('/Home')
-  console.log(currentDirectory)
+  const addOutput = (message) => {
+    setOutput(prevOutput => [...prevOutput, message]);
+  };
+
+  const cd = (newDir) => {
+    if (newDir === "..") {
+      if (currentPath !== "/") {
+        const pathArray = currentPath.split("/").filter(Boolean);
+        pathArray.pop(); // Remove last directory
+        const newPath = pathArray.length ? `/${pathArray.join("/")}` : "/";
+        setCurrentPath(newPath);
+        setCurrentDirectory(getDirectoryFromPath(newPath));
+      } else {
+        addOutput("Already at root directory.");
+      }
+    } else if (currentDirectory[newDir]) {
+      // Moving down into specified directory
+      const newPath = currentPath === "/" ? `/${newDir}` : `${currentPath}/${newDir}`;
+      setCurrentPath(newPath);
+      setCurrentDirectory(currentDirectory[newDir]);
+    } else {
+      addOutput(`No such directory: ${newDir}`);
+    }
+  };
+
+  const getDirectoryFromPath = (path) => {
+    const pathParts = path.split("/").filter(Boolean);
+    let dir = fs;
+    for (const part of pathParts) {
+      dir = dir[part];
+      if (!dir) return null;
+    }
+    return dir;
+  };
 
   return (
-    <div className="App" style={{ overflowY: "none"}}>
-      <div style={{ width:"70%", height:"100%", flexGrow: "0"}}>
-        <Terminal currentDirectory={currentDirectory}/>
+    <div className="App" style={{ overflowY: "none" }}>
+      <div style={{ width: "70%", height: "100%", flexGrow: "0" }}>
+        {currentDirectory && (
+          <Terminal
+            currentDirectory={currentDirectory}
+            currentPath={currentPath}
+            cd={cd}
+            output={output}
+            addOutput={addOutput}
+          />
+        )}
       </div>
-      <div style={{ flexGrow: "1", display: "flex", flexDirection: "column",  backgroundColor: "black"}}>
-        <div style={{ height: "50%", width: "100%", padding: "0.2em"}}>
-          <div style={{height: "100%", width: "100%", backgroundColor: "#1E2D2F"}}></div>
+      <div
+        style={{
+          flexGrow: "1",
+          display: "flex",
+          flexDirection: "column",
+          backgroundColor: "black",
+        }}
+      >
+        <div style={{ height: "50%", width: "100%", padding: "0.2em" }}>
+          <div style={{ height: "100%", width: "100%", backgroundColor: "#1E2D2F" }}></div>
         </div>
-        <div style={{ heigiht: "50%", width: "100%", padding: "0 0.2em 0.2em 0.2em"}}>
-          <div style={{height: "100%", width: "100%", backgroundColor: "#C57B57"}}></div>
+        <div style={{ height: "50%", width: "100%", padding: "0 0.2em 0.2em 0.2em" }}>
+          <div style={{ height: "100%", width: "100%", backgroundColor: "#C57B57" }}></div>
         </div>
       </div>
     </div>
-    // <div style={{height:'100%', border:'1px solid lime'}}></div>
   );
 }
 
 export default App;
-
-
