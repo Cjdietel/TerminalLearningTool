@@ -1820,9 +1820,9 @@ get-value@^2.0.3, get-value@^2.0.6:
   resolved "https://registry.npmjs.org/get-value/-/get-value-2.0.6.tgz"
   integrity sha512-Ln0UQDlxH1BapMu3GPtf7CuYNwRZf2gwCuPqbyG6pB8WfmFpzqcy4xtAaAMUhnNqjMKTiCPZG2oMT3YSx8U2NA==
 
-gh-pages@^6.1.1:
+gh-pages@^6.2.0:
   version "6.2.0"
-  resolved "https://registry.npmjs.org/gh-pages/-/gh-pages-6.2.0.tgz"
+  resolved "https://registry.yarnpkg.com/gh-pages/-/gh-pages-6.2.0.tgz#4a0ca8ab78d273e78b82fbc9bb6e1c27a22ea0b8"
   integrity sha512-HMXJ8th9u5wRXaZCnLcs/d3oVvCHiZkaP5KQExQljYGwJjQbSPyTdHe/Gc1IvYUR/rWiZLxNobIqfoMHKTKjHQ==
   dependencies:
     async "^3.2.4"
