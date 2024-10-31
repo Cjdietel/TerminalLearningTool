@@ -79,7 +79,6 @@ function App() {
         addOutput("Already at root directory.");
       }
     } else if (currentDirectory[newDir]) {
-      // Moving down into specified directory
       const newPath = currentPath === "/" ? `/${newDir}` : `${currentPath}/${newDir}`;
       setCurrentPath(newPath);
       setCurrentDirectory(currentDirectory[newDir]);
@@ -103,11 +102,13 @@ function App() {
       <div style={{ width: "70%", height: "100%", flexGrow: "0" }}>
         {currentDirectory && (
           <Terminal
+          setCurrentDirectory={setCurrentDirectory}
             currentDirectory={currentDirectory}
             currentPath={currentPath}
             cd={cd}
             output={output}
             addOutput={addOutput}
+            setOutput={setOutput}
           />
         )}
       </div>
