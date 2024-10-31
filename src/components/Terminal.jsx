@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../Terminal.css';
 
 const Terminal = (props) => {
@@ -7,10 +7,24 @@ const Terminal = (props) => {
   const [input, setInput] = useState('');
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     console.log(currentDirectory);
   }, [currentDirectory]);
+
+  useEffect(() => {
+    const handleMouseClick = () => {
+      inputRef.current.focus();
+    };
+
+    document.addEventListener('click', handleMouseClick);
+    
+    // Cleanup on component unmount
+    return () => {
+      document.removeEventListener('click', handleMouseClick);
+    };
+  }, []);
 
   const handleInput = (e) => {
     if (e.key === 'Enter') {
@@ -109,6 +123,7 @@ const Terminal = (props) => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleInput}
+            ref={inputRef}
             className="input"
           />
         </div>
