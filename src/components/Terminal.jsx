@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../Terminal.css';
 
 const Terminal = (props) => {
-  const { currentDirectory, currentPath, cd, output, addOutput, setOutput, setCurrentDirectory } = props;
+  const { currentDirectory, currentPath, cd, output, addOutput, setOutput, setCurrentDirectory, mkdir } = props;
   const [userName, setUserName] = useState('cjdietel');
   const [input, setInput] = useState('');
   const [history, setHistory] = useState([]);
@@ -85,6 +85,37 @@ const Terminal = (props) => {
         setOutput([]);
         addOutput("Terminal cleared.");
       } 
+      // HANDLE PWD
+      else if (command === 'pwd') {
+
+        addOutput(`${currentPath}`)
+      }
+      // HANDLE UNAME
+      else if (command.startsWith('uname')) {
+
+        addOutput('Linux')
+      }
+      // HANDLE WHOAMI
+      else if (command.startsWith('whoami')) {
+
+        addOutput(`${userName}`)
+      }
+      // HANDLE WC
+      else if (command.startsWith('wc ')) {
+        const fileName = command.split(' ')[1] // works with only one file at the moment
+        console.log(fileName)
+        const fileContent = currentDirectory[fileName]
+        const lineCount = fileContent.split('\n').length
+        const wordCount = fileContent.split(' ').length
+        const charCount = fileContent.split('').length
+        const wcOutput = `${lineCount} ${wordCount} ${charCount} ${fileName}`
+        addOutput(<div>{wcOutput}</div>)
+      }
+      // HANDLE MKDIR
+      else if (command.startsWith('mkdir ')) {
+        const newDir = command.split(' ')[1]
+        mkdir(newDir)
+      }
       else {
         addOutput(`Command not found: ${command}`);
       }

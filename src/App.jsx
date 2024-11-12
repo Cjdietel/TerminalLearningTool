@@ -87,6 +87,17 @@ function App() {
     }
   };
 
+  const mkdir = (newDir) => {
+    if (!currentDirectory[newDir]) {
+      currentDirectory[newDir] = {}
+      // console.log('1')
+    }
+    else {
+      addOutput(`Directory already exists: ${newDir}`)
+      // console.log('0')
+    }
+  }
+
   const getDirectoryFromPath = (path) => {
     const pathParts = path.split("/").filter(Boolean);
     let dir = fs;
@@ -109,6 +120,7 @@ function App() {
             output={output}
             addOutput={addOutput}
             setOutput={setOutput}
+            mkdir={mkdir}
           />
         )}
       </div>
