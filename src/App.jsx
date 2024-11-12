@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import JSZip from 'jszip';
 import JSZipUtils from 'jszip-utils';
 import config from './config.json';
+import ProblemPanel from './components/ProblemPanel';
+import FSTree from './components/FSTree'
 
 function App() {
   const [fs, setFs] = useState(null); // The full file system
@@ -120,12 +122,8 @@ function App() {
           backgroundColor: "black",
         }}
       >
-        <div style={{ height: "50%", width: "100%", padding: "0.2em" }}>
-          <div style={{ height: "100%", width: "100%", backgroundColor: "#1E2D2F" }}></div>
-        </div>
-        <div style={{ height: "50%", width: "100%", padding: "0 0.2em 0.2em 0.2em" }}>
-          <div style={{ height: "100%", width: "100%", backgroundColor: "#C57B57" }}></div>
-        </div>
+        <ProblemPanel />
+        <FSTree />
       </div>
     </div>
   );
