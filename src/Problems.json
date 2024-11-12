@@ -1,0 +1,20 @@
+{
+    "p1" : {
+        "problemText" : "Navigate to the zipped folder",
+        "answer" : "cd zipped",
+        "isComplete" : false,
+        "points" : 1
+    },
+    "p2" : {
+        "problemText" : "Display current items inside current directory",
+        "answer" : "ls",
+        "isComplete" : false,
+        "points" : 1
+    },
+    "p3" : {
+        "problemText" : "Navigate to folder1",
+        "answer" : "cd folder1",
+        "isComplete" : false,
+        "points" : 1
+    }
+}
