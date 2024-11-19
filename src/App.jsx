@@ -100,6 +100,17 @@ function App() {
     }
   }
 
+  const rmdir = (dirToDelete) => {
+    if (currentDirectory[dirToDelete]) {
+      delete currentDirectory[dirToDelete]
+      console.log('1')
+    }
+    else {
+      addOutput(`Directory does not exist: ${dirToDelete}`)
+      console.log('0')
+    }
+  }
+
   const getDirectoryFromPath = (path) => {
     const pathParts = path.split("/").filter(Boolean);
     let dir = fs;
@@ -123,6 +134,7 @@ function App() {
             addOutput={addOutput}
             setOutput={setOutput}
             mkdir={mkdir}
+            rmdir={rmdir}
           />
         )}
       </div>

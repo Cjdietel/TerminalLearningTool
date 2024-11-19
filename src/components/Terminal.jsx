@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../Terminal.css';
 
 const Terminal = (props) => {
-  const { currentDirectory, currentPath, cd, output, addOutput, setOutput, setCurrentDirectory, mkdir } = props;
+  const { currentDirectory, currentPath, cd, output, addOutput, setOutput, setCurrentDirectory, mkdir, rmdir } = props;
   const [userName, setUserName] = useState('cjdietel');
   const [input, setInput] = useState('');
   const [history, setHistory] = useState([]);
@@ -116,6 +116,11 @@ const Terminal = (props) => {
         const newDir = command.split(' ')[1]
         mkdir(newDir)
       }
+      // HANDLE RMDIR
+      else if (command.startsWith('rmdir ')) {
+        const removedDir = command.split(' ')[1]
+        rmdir(removedDir)        
+      } 
       else {
         addOutput(`Command not found: ${command}`);
       }
