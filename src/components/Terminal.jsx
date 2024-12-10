@@ -2,7 +2,19 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../Terminal.css';
 
 const Terminal = (props) => {
-  const { currentDirectory, currentPath, cd, output, addOutput, setOutput, setCurrentDirectory, mkdir, rmdir } = props;
+  const { 
+    currentDirectory, 
+    currentPath, 
+    cd, 
+    output, 
+    addOutput, 
+    setOutput, 
+    setCurrentDirectory, 
+    mkdir, 
+    rmdir, 
+    touch, 
+    echo,
+  } = props;
   const [userName, setUserName] = useState('cjdietel');
   const [input, setInput] = useState('');
   const [history, setHistory] = useState([]);
@@ -121,6 +133,30 @@ const Terminal = (props) => {
         const removedDir = command.split(' ')[1]
         rmdir(removedDir)        
       } 
+      // HANDLE TOUCH
+      else if (command.startsWith('touch ')) {
+        const newFile = command.split(' ')[1]
+        touch(newFile)
+      }
+      // HANDLE ECHO
+      else if (command.startsWith('echo ')) {
+        const commandArray = command.split(' ')
+        console.log(commandArray)
+        const echoText = commandArray[1]
+        const file = commandArray.slice(-1)[0] // only used with operators
+        console.log(file)
+        var operator = ''
+        if (commandArray.includes('>')) {
+          operator = '>'
+          echo(echoText, operator, file)
+        } else if (commandArray.includes('>>')) {
+          operator = '>>'
+          echo(echoText, operator, file)
+        }
+        else { // no write to file operator
+          addOutput(echoText)
+        }
+      }
       else {
         addOutput(`Command not found: ${command}`);
       }

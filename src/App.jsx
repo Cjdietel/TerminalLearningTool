@@ -34,7 +34,11 @@ function App() {
 
               if (pathPart.includes('.')) {
                 const filePromise = entry.async("string").then((content) => {
-                  currentLevel[pathPart] = content;
+                  // currentLevel[pathPart] = content;
+                  currentLevel[pathPart] = {
+                    content: content,
+                    date_modified: Date()
+                  };
                 });
                 promises.push(filePromise);
               } else {
@@ -111,6 +115,32 @@ function App() {
     }
   }
 
+  const touch = (newFileName) => {
+    // console.log(newFileName)
+    if (!currentDirectory[newFileName]) {
+      currentDirectory[newFileName] = {
+        content: '',
+        date_modified: Date()
+      }
+    }
+    else {
+      currentDirectory[newFileName].date_modified = Date() // updates the touched file date_modified to the current date (destructive, changes the original object)
+    }
+
+  }
+
+  const echo = (text, operator, file) => {
+    if (operator === '>') {
+      console.log(file)
+      currentDirectory[file].content = text
+      currentDirectory[file].date_modified = Date()
+    }
+    else if (operator === '>>') {
+      currentDirectory[file].content += text
+      currentDirectory[file].date_modified = Date()
+    }
+  }
+
   const getDirectoryFromPath = (path) => {
     const pathParts = path.split("/").filter(Boolean);
     let dir = fs;
@@ -135,6 +165,8 @@ function App() {
             setOutput={setOutput}
             mkdir={mkdir}
             rmdir={rmdir}
+            touch={touch}
+            echo={echo}
           />
         )}
       </div>
@@ -146,7 +178,9 @@ function App() {
           backgroundColor: "black",
         }}
       >
-        <ProblemPanel />
+        <ProblemPanel 
+          currentPath={currentPath}
+        />
         <FSTree />
       </div>
     </div>
