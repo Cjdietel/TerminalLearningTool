@@ -179,8 +179,12 @@ function App() {
         }}
       >
         <ProblemPanel 
+<<<<<<< HEAD
           currentPath={currentPath}
         />
+=======
+        currentPath={currentPath}/>
+>>>>>>> 5fc869b (hard coded problem 1 check)
         <FSTree />
       </div>
     </div>

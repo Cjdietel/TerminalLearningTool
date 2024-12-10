@@ -2,9 +2,19 @@ import { useState } from 'react'
 
 import problems from "../Problems.json"
 
+
+
 const problemKeys = Object.keys(problems);
 
+
+
 const ProblemPanel = (props) => {
+  const { currentPath } = props
+  if (currentPath.split("/")[currentPath.split("/").length - 1] == "zipped")
+  {
+    problems.p1.isComplete = true;
+  }
+    
     return <div style={{ height: "50%", width: "100%", padding: "0 0.2em 0.2em 0.2em" }}>
           <div style={{ height: "100%", width: "100%", backgroundColor: "#1E2D2F", display: "flex", justifyContent: "space-between", flexDirection: "column" }}>
             <div>
