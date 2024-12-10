@@ -178,10 +178,8 @@ function App() {
           backgroundColor: "black",
         }}
       >
-        <ProblemPanel
-          currentPath={currentPath}
-        />
-
+        <ProblemPanel 
+        currentPath={currentPath}/>
         <FSTree />
       </div>
     </div>
