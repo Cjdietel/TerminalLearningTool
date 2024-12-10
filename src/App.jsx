@@ -178,13 +178,10 @@ function App() {
           backgroundColor: "black",
         }}
       >
-        <ProblemPanel 
-<<<<<<< HEAD
+        <ProblemPanel
           currentPath={currentPath}
         />
-=======
-        currentPath={currentPath}/>
->>>>>>> 5fc869b (hard coded problem 1 check)
+
         <FSTree />
       </div>
     </div>
