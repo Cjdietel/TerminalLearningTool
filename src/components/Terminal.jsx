@@ -71,7 +71,8 @@ const Terminal = (props) => {
       // HANDLE CAT
       else if (command.startsWith('cat ')) {
         const fileName = command.split(' ')[1];
-        const fileContent = currentDirectory[fileName];
+        const fileContent = currentDirectory[fileName].content;
+        console.log(fileContent);
 
         if (typeof fileContent === 'string') {
           addOutput(<div>{fileContent}</div>);
@@ -116,7 +117,7 @@ const Terminal = (props) => {
       else if (command.startsWith('wc ')) {
         const fileName = command.split(' ')[1] // works with only one file at the moment
         console.log(fileName)
-        const fileContent = currentDirectory[fileName]
+        const fileContent = currentDirectory[fileName].content
         const lineCount = fileContent.split('\n').length
         const wordCount = fileContent.split(' ').length
         const charCount = fileContent.split('').length
@@ -140,21 +141,61 @@ const Terminal = (props) => {
       }
       // HANDLE ECHO
       else if (command.startsWith('echo ')) {
-        const commandArray = command.split(' ')
+        var currentPart = "";
+        var inQuotes = false;
+        var commandArray = [];
+        var operators = ['>','>>']
+        // const file = command.split(' ').at(-1)
+
+        for (let i = 0; i < command.length; i++) {
+          const char = command[i];
+          if (char === '"' || char === "'") {
+            inQuotes = !inQuotes
+            continue
+          }
+          if (char === ' ' && !inQuotes) {
+            if (currentPart) {
+              if (commandArray.length === 0) {
+                commandArray.push(currentPart);
+              } else if (operators.includes(currentPart)) { // Push the operator separately
+                commandArray.push(currentPart);
+              } else if (commandArray.length === 1 || operators.includes(commandArray[commandArray.length - 1])) { // Push file name after the operator
+                commandArray.push(currentPart);
+              } else {
+                if (commandArray.length > 1 && !operators.includes(commandArray[commandArray.length - 1])) { // Group words between "echo" and the operator
+                  commandArray[1] += " " + currentPart;
+                } else {
+                  commandArray.push(currentPart);
+                }
+              }
+              currentPart = ""
+            }
+            continue;
+          }
+          currentPart += char;
+        }
+        
+
+
+        if (currentPart) {
+          if (commandArray.length > 1 && !operators.includes(commandArray[commandArray.length - 1])) {
+            commandArray[1] += " " + currentPart;
+          } else {
+            commandArray.push(currentPart);
+          }
+        }
+
+
         console.log(commandArray)
         const echoText = commandArray[1]
-        const file = commandArray.slice(-1)[0] // only used with operators
-        console.log(file)
-        var operator = ''
-        if (commandArray.includes('>')) {
-          operator = '>'
-          echo(echoText, operator, file)
-        } else if (commandArray.includes('>>')) {
-          operator = '>>'
-          echo(echoText, operator, file)
-        }
-        else { // no write to file operator
+        if (commandArray.length == 2) {
           addOutput(echoText)
+        }
+        else {
+          const operator = commandArray[2]
+          const file = commandArray[3]
+          console.log([echoText, operator, file])
+          echo(echoText, operator, file)
         }
       }
       else {
