@@ -174,9 +174,6 @@ const Terminal = (props) => {
           }
           currentPart += char;
         }
-        
-
-
         if (currentPart) {
           if (commandArray.length > 1 && !operators.includes(commandArray[commandArray.length - 1])) {
             commandArray[1] += " " + currentPart;
@@ -184,8 +181,6 @@ const Terminal = (props) => {
             commandArray.push(currentPart);
           }
         }
-
-
         console.log(commandArray)
         const echoText = commandArray[1]
         if (commandArray.length == 2) {
