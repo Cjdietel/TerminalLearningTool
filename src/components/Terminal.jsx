@@ -14,9 +14,10 @@ const Terminal = (props) => {
     rmdir, 
     touch, 
     echo,
+    input,
+    setInput
   } = props;
   const [userName, setUserName] = useState('cjdietel');
-  const [input, setInput] = useState('');
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const inputRef = useRef(null);

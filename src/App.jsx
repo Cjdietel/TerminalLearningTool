@@ -12,6 +12,7 @@ function App() {
   const [currentDirectory, setCurrentDirectory] = useState(null); // The current directory object
   const [currentPath, setCurrentPath] = useState("/"); // String to hold the current path
   const [output, setOutput] = useState([]); // Output state to hold terminal messages
+  const [input, setInput] = useState('');
 
   function createFSObject() {
     return new Promise((resolve, reject) => {
@@ -167,6 +168,8 @@ function App() {
             rmdir={rmdir}
             touch={touch}
             echo={echo}
+            input={input}
+            setInput={setInput}
           />
         )}
       </div>
@@ -179,7 +182,10 @@ function App() {
         }}
       >
         <ProblemPanel 
-        currentPath={currentPath}/>
+        currentPath={currentPath}
+        input={input}
+        setInput={setInput}
+        />
         <FSTree />
       </div>
     </div>
