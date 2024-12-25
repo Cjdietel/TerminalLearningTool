@@ -6,12 +6,25 @@ import JSZipUtils from 'jszip-utils';
 import config from './config.json';
 import ProblemPanel from './components/ProblemPanel';
 import FSTree from './components/FSTree'
+import UsernamePopup from './components/UsernamePopup';
+
 
 function App() {
   const [fs, setFs] = useState(null); // The full file system
   const [currentDirectory, setCurrentDirectory] = useState(null); // The current directory object
   const [currentPath, setCurrentPath] = useState("/"); // String to hold the current path
   const [output, setOutput] = useState([]); // Output state to hold terminal messages
+  // const [problems, setProblems] = useState();
+  const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
+  const [userName, setUserName] = useState('');
+  const [showPopup, setShowPopup] = useState(true);
+
+
+
+  window.onbeforeunload = function() {
+    return "Data will be lost if you leave the page, are you sure?";
+  };
+
 
   function createFSObject() {
     return new Promise((resolve, reject) => {
@@ -72,6 +85,7 @@ function App() {
   const addOutput = (message) => {
     setOutput(prevOutput => [...prevOutput, message]);
   };
+
 
   const cd = (newDir) => {
     if (newDir === "..") {
@@ -153,12 +167,24 @@ function App() {
 
   return (
     <div className="App" style={{ overflowY: "none" }}>
+      {showPopup && (
+        <UsernamePopup
+          setUserName={(name) => {
+            setUserName(name);
+            setShowPopup(false);
+          }}
+        />
+      )}
       <div style={{ width: "70%", height: "100%", flexGrow: "0" }}>
         {currentDirectory && (
           <Terminal
           setCurrentDirectory={setCurrentDirectory}
             currentDirectory={currentDirectory}
             currentPath={currentPath}
+            currentProblemIndex={currentProblemIndex}
+            setCurrentProblemIndex={setCurrentProblemIndex}
+            userName={userName}
+            showPopup={showPopup}
             cd={cd}
             output={output}
             addOutput={addOutput}
@@ -167,6 +193,7 @@ function App() {
             rmdir={rmdir}
             touch={touch}
             echo={echo}
+            
           />
         )}
       </div>
@@ -179,8 +206,15 @@ function App() {
         }}
       >
         <ProblemPanel 
-        currentPath={currentPath}/>
-        <FSTree />
+        currentProblemIndex={currentProblemIndex}
+        setCurrentProblemIndex={setCurrentProblemIndex}
+        currentDirectory={currentDirectory}
+        currentPath={currentPath}
+        />
+        <FSTree 
+        currentDirectory={currentDirectory}
+        currentPath={currentPath}
+        />
       </div>
     </div>
   );

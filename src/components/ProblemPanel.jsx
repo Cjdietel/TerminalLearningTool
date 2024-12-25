@@ -1,14 +1,18 @@
 import { useState } from 'react';
 import problems from "../Problems.json";
+import Terminal from './Terminal';
+import classNames from 'classnames';
+import "./ProblemPanel.css";
 
-const ProblemPanel = ({ currentPath }) => {
-  const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
+const ProblemPanel = ({ 
+  currentProblemIndex, 
+  setCurrentProblemIndex,   
+}) => {
+
   const problemKeys = Object.keys(problems);
+  const currentProblemKey = problemKeys[currentProblemIndex];
+  const currentProblem = problems[currentProblemKey];
 
-  // Update completion status if currentPath ends with "zipped"
-  if (currentPath.endsWith("/zipped")) {
-    problems.p1.isComplete = true;
-  }
 
   const handlePrevious = () => {
     if (currentProblemIndex > 0) {
@@ -22,15 +26,12 @@ const ProblemPanel = ({ currentPath }) => {
     }
   };
 
-  const currentProblemKey = problemKeys[currentProblemIndex];
-  const currentProblem = problems[currentProblemKey];
-
   // Calculate total points
   const accumulatedPoints = problemKeys.reduce((total, key) => 
     total + (problems[key].isComplete ? problems[key].points : 0), 0
   );
 
-  const handleCommandExecution = (command) => {
+  const handleCommandSubmit = (command) => {
     if (command === currentProblem.answer) {
       currentProblem.isComplete = true;
     } else {
@@ -38,8 +39,13 @@ const ProblemPanel = ({ currentPath }) => {
     }
   };
 
+
+  const glowClass = currentProblem.isComplete ? 'green-glow' : 'red-glow';
+
   return (
-    <div style={{ height: "50%", width: "100%", padding: "0 0.2em 0.2em 0.2em" }}>
+    <div 
+    className={classNames('ProblemPanel', glowClass)}
+       >
       <div style={{
         height: "100%",
         width: "100%",
@@ -127,4 +133,50 @@ const ProblemPanel = ({ currentPath }) => {
   );
 };
 
+
 export default ProblemPanel;
+
+/*
+
+  NOTE: This validateCommand does not cover every possible solution and only compares user input
+  to the answer key in Problems.json.
+  Ony a temp solution (as of 12/15/2024 12:05am)
+
+  Should be retrofitted for every type of problem, 
+  probably modeled after original shelladventure system with keys and cwd checking
+
+
+*/
+
+export const validateCommand = (
+  command, 
+  currentProblemIndex, 
+  setCurrentProblemIndex, 
+  problems,  
+) => {
+  const problemKeys = problems ? Object.keys(problems) : [];
+  const currentProblemKey = problemKeys[currentProblemIndex];
+  
+  // Ensure currentProblemKey is valid and exists in the problems object
+  const currentProblem = currentProblemKey && problems[currentProblemKey] ? problems[currentProblemKey] : null;
+
+  if (!currentProblem) {
+    console.log("Invalid problem data");
+    return;
+  }
+
+  if (command === currentProblem.answer) {
+    const updatedProblems = {...problems};
+    updatedProblems[currentProblemKey].isComplete = true;
+    setProblems(updatedProblems);
+    console.log("completed");
+
+    if (currentProblemIndex < problemKeys.length - 1) {
+      setCurrentProblemIndex(currentProblemIndex + 1);
+    } else {
+      console.log("all problems completed")
+    }
+  } else {
+    console.log("try again");
+  }
+};

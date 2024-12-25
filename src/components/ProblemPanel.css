@@ -1,0 +1,33 @@
+@keyframes redGlow {
+    0%, 100% {
+      box-shadow: 0 0 40px rgba(255, 0, 0, 0.6);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(255, 0, 0, 0.8);
+    }
+  }
+  
+  @keyframes greenGlow {
+    0%, 100% {
+      box-shadow: 0 0 40px rgba(0, 255, 0, 0.6);
+    }
+    50% {
+      box-shadow: 0 0 40px rgba(0, 255, 0, 0.8);
+    }
+  }
+
+  .problem-panel {
+    height: 100%;
+    width: 100%;
+    padding: 0 0.2em 0.2em 0.2em;
+    transition: box-shadow 5s ease; /* Smooth transition for box-shadow */
+  }
+  
+  .red-glow {
+    animation: redGlow 2s infinite;
+  }
+  
+  .green-glow {
+    animation: greenGlow 2s infinite;
+  }
+  

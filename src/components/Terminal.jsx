@@ -1,10 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../Terminal.css';
+import { validateCommand } from './ProblemPanel';
+import problems from '../Problems.json'
 
 const Terminal = (props) => {
   const { 
     currentDirectory, 
     currentPath, 
+    userName,
+    currentProblemIndex,
+    setCurrentProblemIndex,
+    showPopup,
     cd, 
     output, 
     addOutput, 
@@ -15,7 +21,6 @@ const Terminal = (props) => {
     touch, 
     echo,
   } = props;
-  const [userName, setUserName] = useState('cjdietel');
   const [input, setInput] = useState('');
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
@@ -27,7 +32,9 @@ const Terminal = (props) => {
 
   useEffect(() => {
     const handleMouseClick = () => {
-      inputRef.current.focus();
+      if (!showPopup) {
+        inputRef.current.focus();
+      }
     };
 
     document.addEventListener('click', handleMouseClick);
@@ -36,13 +43,12 @@ const Terminal = (props) => {
     return () => {
       document.removeEventListener('click', handleMouseClick);
     };
-  }, []);
+  }, [showPopup]);
 
   const handleInput = (e) => {
     if (e.key === 'Enter') {
       const command = input.trim();
       addOutput(`(${userName}@TerminalLearningTool)-[${currentPath}]$ ${command}`);
-
       setHistory([...history, command]);
       setHistoryIndex(history.length);
 
@@ -198,6 +204,7 @@ const Terminal = (props) => {
       }
 
       setInput(''); // Clear the input
+      validateCommand(command, currentProblemIndex, setCurrentProblemIndex, problems);
     } else if (e.key === 'ArrowUp') {
       // Navigate up in history
       if (historyIndex > 0) {
