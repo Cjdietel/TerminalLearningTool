@@ -7,6 +7,7 @@ import config from './config.json';
 import ProblemPanel from './components/ProblemPanel';
 import FSTree from './components/FSTree'
 import UsernamePopup from './components/UsernamePopup';
+import { useAppContext } from './shared/AppContext';
 
 
 function App() {
@@ -14,7 +15,6 @@ function App() {
   const [currentDirectory, setCurrentDirectory] = useState(null); // The current directory object
   const [currentPath, setCurrentPath] = useState("/"); // String to hold the current path
   const [output, setOutput] = useState([]); // Output state to hold terminal messages
-  // const [problems, setProblems] = useState();
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const [userName, setUserName] = useState('');
   const [showPopup, setShowPopup] = useState(true);

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../Terminal.css';
 import { validateCommand } from './ProblemPanel';
 import problems from '../Problems.json'
+// import commands from '../commands/commands.config.jsx'
 
 const Terminal = (props) => {
   const { 
@@ -47,7 +48,10 @@ const Terminal = (props) => {
 
   const handleInput = (e) => {
     if (e.key === 'Enter') {
-      const command = input.trim();
+      const command = input.trim()
+      // const inputtedCommand = input.trim();
+      // const command = commands[inputtedCommand.split(' ')[0]]
+      // console.log(inputtedCommand.split(' ')[0])
       addOutput(`(${userName}@TerminalLearningTool)-[${currentPath}]$ ${command}`);
       setHistory([...history, command]);
       setHistoryIndex(history.length);
@@ -57,6 +61,13 @@ const Terminal = (props) => {
       //            COMMANDS            //
       //                                //
       ////////////////////////////////////
+
+      // if (command) {
+      //   command();
+      // }
+      // else {
+      //   addOutput(`Command not found: ${inputtedCommand.split(' ')[0]}`);
+      // }
 
       // HANDLE CD
       if (command.startsWith('cd ')) {

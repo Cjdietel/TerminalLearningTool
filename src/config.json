@@ -1,3 +1,4 @@
 {
-    "zippedFolder" : "../zipped.zip"
+    "zippedFolder" : "../zipped.zip",
+    "nameDictionary" : "src/assets/NameDictionary.txt"
 }
