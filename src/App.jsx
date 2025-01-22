@@ -166,7 +166,7 @@ function App() {
   };
 
   return (
-    <div className="App" style={{ overflowY: "none" }}>
+    <div className="App" style={{ overflowY: "none", display: "flex", flexGrow: "1" }}>
       {showPopup && (
         <UsernamePopup
           setUserName={(name) => {
@@ -203,15 +203,20 @@ function App() {
           display: "flex",
           flexDirection: "column",
           backgroundColor: "black",
+          width: "30%",
+          height: "100%"
         }}
       >
-        <ProblemPanel 
+        <ProblemPanel
         currentProblemIndex={currentProblemIndex}
         setCurrentProblemIndex={setCurrentProblemIndex}
         currentDirectory={currentDirectory}
         currentPath={currentPath}
         />
         <FSTree 
+        style={{
+          flegGrow: "1",
+        }}
         currentDirectory={currentDirectory}
         currentPath={currentPath}
         />
