@@ -49,6 +49,7 @@ const ProblemPanel = ({
       <div style={{
         height: "100%",
         width: "100%",
+        flexGrow: "1",
         backgroundColor: "#1E2D2F",
         display: "flex",
         flexDirection: "column",
