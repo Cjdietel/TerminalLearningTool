@@ -1,25 +1,25 @@
-// const commands = {}
+const commands = {}
 
-// const importCommands = require.context('./commands', false, '/\.jsx$/')
+const importCommands = require.context('./commands', false, '/\.jsx$/')
 
-// importCommands.keys().forEach((fileName) => {
-//     const commandName = fileName.replace('./', '').replace('.jsx','')
-//     commands[commandName] = importCommands(fileName).default;
-// });
+importCommands.keys().forEach((fileName) => {
+    const commandName = fileName.replace('./', '').replace('.jsx','')
+    commands[commandName] = importCommands(fileName).default;
+});
 
-// // const importCommands = async () => {
-// //     const commandModules = import.meta.glob('./commands/*.jsx')
-// //     console.log()
+// const importCommands = async () => {
+//     const commandModules = import.meta.glob('./commands/*.jsx')
+//     console.log()
 
-// //     for (const path in commandModules) {
-// //         const module = await commandModules[path]();
-// //         const commandName = path
-// //             .replace('.commands/','')
-// //             .replace('.jsx','');
-// //         commands[commandName] = module.default;
-// //     }
-// // };
+//     for (const path in commandModules) {
+//         const module = await commandModules[path]();
+//         const commandName = path
+//             .replace('.commands/','')
+//             .replace('.jsx','');
+//         commands[commandName] = module.default;
+//     }
+// };
 
-// // await importCommands();
+// await importCommands();
 
-// export default commands;
+export default commands;

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import '../Terminal.css';
 import { validateCommand } from './ProblemPanel';
 import problems from '../Problems.json'
-// import commands from '../commands/commands.config.jsx'
+// import commands from '../commands/commands.config.jsx
 
 const Terminal = (props) => {
   const { 
