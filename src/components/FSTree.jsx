@@ -7,6 +7,7 @@ const FSTree = (props) => {
     const {
         currentDirectory,
         currentPath,
+        treeKey
     } = props;
     console.log(currentPath);
 
@@ -21,8 +22,8 @@ const FSTree = (props) => {
                         transformNode(value, key)
                     ),
                 };
-            }
-            return {
+            } else {
+              return {
                 name: `📄 ${name}`, 
                 attributes: {
                     Content: node.content || '(empty)',
@@ -30,6 +31,8 @@ const FSTree = (props) => {
                 },
                 children: []
             };
+            }
+            
         };
         return {
             name: currentPath || '/',

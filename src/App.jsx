@@ -18,6 +18,7 @@ function App() {
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const [userName, setUserName] = useState('');
   const [showPopup, setShowPopup] = useState(true);
+  const [treeKey, setTreeKey] = useState(0);
 
 
 
@@ -48,9 +49,11 @@ function App() {
               if (pathPart.includes('.')) {
                 const filePromise = entry.async("string").then((content) => {
                   // currentLevel[pathPart] = content;
+                  // CONSTRUCTS FILE METADATA
                   currentLevel[pathPart] = {
                     content: content,
-                    date_modified: Date()
+                    date_modified: Date(),
+                    is_file: true,
                   };
                 });
                 promises.push(filePromise);
@@ -98,7 +101,12 @@ function App() {
       } else {
         addOutput("Already at root directory.");
       }
-    } else if (currentDirectory[newDir]) {
+    }
+    else if (newDir === "~") {
+      setCurrentPath("/"); 
+      setCurrentDirectory(fs); 
+    }
+    else if (currentDirectory[newDir] || newDir.is_file === true) {
       const newPath = currentPath === "/" ? `/${newDir}` : `${currentPath}/${newDir}`;
       setCurrentPath(newPath);
       setCurrentDirectory(currentDirectory[newDir]);
@@ -130,6 +138,7 @@ function App() {
   }
 
   const touch = (newFileName) => {
+    setTreeKey(prevKey => prevKey + 1);
     // console.log(newFileName)
     if (!currentDirectory[newFileName]) {
       currentDirectory[newFileName] = {
@@ -214,9 +223,7 @@ function App() {
         currentPath={currentPath}
         />
         <FSTree 
-        style={{
-          flegGrow: "1",
-        }}
+        treeKey={treeKey}
         currentDirectory={currentDirectory}
         currentPath={currentPath}
         />
