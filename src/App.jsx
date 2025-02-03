@@ -91,7 +91,10 @@ function App() {
 
 
   const cd = (newDir) => {
-    if (newDir === "..") {
+    if (newDir.is_file === true) {
+      addOutput(`No such directory: ${newDir}`);
+    }
+    else if (newDir === "..") {
       if (currentPath !== "/") {
         const pathArray = currentPath.split("/").filter(Boolean);
         pathArray.pop(); // Remove last directory
@@ -106,7 +109,7 @@ function App() {
       setCurrentPath("/"); 
       setCurrentDirectory(fs); 
     }
-    else if (currentDirectory[newDir] || newDir.is_file === true) {
+    else if (currentDirectory[newDir]) {
       const newPath = currentPath === "/" ? `/${newDir}` : `${currentPath}/${newDir}`;
       setCurrentPath(newPath);
       setCurrentDirectory(currentDirectory[newDir]);

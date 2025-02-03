@@ -18,9 +18,6 @@ const FSTree = (props) => {
             if (typeof node === 'object' && node.content === undefined) {
                 return {
                     name: `📁 ${name}`,
-                    children: Object.entries(node).map(([key,value]) =>
-                        transformNode(value, key)
-                    ),
                 };
             } else {
               return {
@@ -40,7 +37,7 @@ const FSTree = (props) => {
                 transformNode(value, key)
             ),
         };
-    };
+  };
 
     const treeData = useMemo(() => transformToTreeData(currentDirectory), [currentDirectory]);
 
@@ -64,6 +61,10 @@ const FSTree = (props) => {
             width: '100%', 
             padding: '0.5em', 
             backgroundColor: '#e8e8e8', 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            height: '100%'
             }}>
   {treeData ? (
     <Tree

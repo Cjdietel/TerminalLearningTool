@@ -1,7 +1,13 @@
 import React from 'react';
 
 const Nodes = ({ nodeDatum }) => {
-  const isLeafNode = !nodeDatum.children || nodeDatum.children.length === 0;
+  let isLeafNode = false;
+  if (nodeDatum.name.includes("📁")) {
+    isLeafNode = false;
+  } else if (nodeDatum.name.includes("📄")) {
+    isLeafNode = true;
+  }
+  // const isLeafNode = !nodeDatum.children || nodeDatum.children.length === 0;
 
   // Folder icon for non-leaf nodes
   const folderSVG = (
@@ -26,13 +32,12 @@ const Nodes = ({ nodeDatum }) => {
       </g>
       {/* Render the title/text, aligned to the center */}
       <text 
-        x="2%" 
-        y="15%" 
-        dy="0.1em" 
-        textAnchor="middle" 
-        fill="#fff" 
-        fontSize="1.2em" 
-        style={{ fontSize: '1.2em', fontWeight: 'bold' }}
+       x="2%" 
+       y="15%" 
+       textAnchor="middle" 
+       fill="black"
+       fontSize="1.5em"
+       fontWeight="bold"
       >
         {nodeDatum.name}
       </text>
