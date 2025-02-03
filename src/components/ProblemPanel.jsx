@@ -43,7 +43,10 @@ const ProblemPanel = ({
   const glowClass = currentProblem.isComplete ? 'green-glow' : 'red-glow';
 
   return (
-    <div 
+    <div
+    style={{
+      flexGrow: 1
+    }}
     className={classNames('ProblemPanel', glowClass)}
        >
       <div style={{

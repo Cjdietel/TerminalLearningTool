@@ -27,45 +27,71 @@ function App() {
   };
 
 
+  function getRandomWord(wordList) {
+    return wordList[Math.floor(Math.random() * wordList.length)];
+  }
+  
   function createFSObject() {
     return new Promise((resolve, reject) => {
       JSZipUtils.getBinaryContent(config.zippedFolder, function (err, data) {
         if (err) {
           return reject(err);
         }
-        JSZip.loadAsync(data).then(function (zip) {
+        JSZip.loadAsync(data).then(async function (zip) {
           const fs = {};
           const promises = [];
-
+          const nameMapping = {}; // Maps original names to random names
+          
+          // Load the word list
+          const wordListResponse = await fetch(config.wordList);
+          const wordListText = await wordListResponse.text();
+          const wordList = wordListText.split("\n").map(word => word.trim()).filter(Boolean);
+  
           zip.forEach(function (path, entry) {
             let filePathArray = entry.name.endsWith('/')
               ? entry.name.slice(0, -1).split('/')
               : entry.name.split('/');
-
+  
             let currentLevel = fs;
             for (let i = 0; i < filePathArray.length; i++) {
-              const pathPart = filePathArray[i];
-
-              if (pathPart.includes('.')) {
+              let originalName = filePathArray[i];
+  
+              // Handle files separately
+              let randomName;
+              if (originalName.includes('.')) {
+                let parts = originalName.split('.');
+                let extension = parts.pop(); // Extract extension
+                let baseName = parts.join('.'); // Remaining name
+  
+                if (!nameMapping[baseName]) {
+                  nameMapping[baseName] = getRandomWord(wordList);
+                }
+                randomName = `${nameMapping[baseName]}.${extension}`; // Preserve extension
+              } else {
+                if (!nameMapping[originalName]) {
+                  nameMapping[originalName] = getRandomWord(wordList);
+                }
+                randomName = nameMapping[originalName];
+              }
+  
+              if (randomName.includes('.')) {
                 const filePromise = entry.async("string").then((content) => {
-                  // currentLevel[pathPart] = content;
-                  // CONSTRUCTS FILE METADATA
-                  currentLevel[pathPart] = {
+                  currentLevel[randomName] = {
                     content: content,
-                    date_modified: Date(),
+                    date_modified: new Date().toISOString(),
                     is_file: true,
                   };
                 });
                 promises.push(filePromise);
               } else {
-                if (!currentLevel[pathPart]) {
-                  currentLevel[pathPart] = {};
+                if (!currentLevel[randomName]) {
+                  currentLevel[randomName] = {};
                 }
-                currentLevel = currentLevel[pathPart];
+                currentLevel = currentLevel[randomName];
               }
             }
           });
-
+  
           Promise.all(promises)
             .then(() => resolve(fs))
             .catch(reject);
@@ -73,6 +99,7 @@ function App() {
       });
     });
   }
+  
 
   useEffect(() => {
     createFSObject()
@@ -208,7 +235,6 @@ function App() {
       </div>
       <div
         style={{
-          flexGrow: "1",
           display: "flex",
           flexDirection: "column",
           backgroundColor: "black",
