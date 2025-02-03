@@ -9,7 +9,7 @@ const FSTree = (props) => {
         currentPath,
         treeKey
     } = props;
-    console.log(currentPath);
+    // console.log(currentPath);
 
     const transformToTreeData = (directory) => {
         if (!directory) return null;
