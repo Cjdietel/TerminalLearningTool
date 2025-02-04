@@ -80,6 +80,11 @@ function App() {
                     content: content,
                     date_modified: new Date().toISOString(),
                     is_file: true,
+                    permissions: {
+                      read: false,
+                      write: true,
+                      execute: false
+                    }
                   };
                 });
                 promises.push(filePromise);
@@ -159,11 +164,11 @@ function App() {
   const rmdir = (dirToDelete) => {
     if (currentDirectory[dirToDelete]) {
       delete currentDirectory[dirToDelete]
-      console.log('1')
+      // console.log('1')
     }
     else {
       addOutput(`Directory does not exist: ${dirToDelete}`)
-      console.log('0')
+      // console.log('0')
     }
   }
 
@@ -172,8 +177,14 @@ function App() {
     // console.log(newFileName)
     if (!currentDirectory[newFileName]) {
       currentDirectory[newFileName] = {
-        content: '',
-        date_modified: Date()
+        content: content,
+        date_modified: new Date().toISOString(),
+        is_file: true,
+        permissions: {
+          read: false,
+          write: true,
+          execute: false
+        }
       }
     }
     else {

@@ -90,8 +90,10 @@ const Terminal = (props) => {
         const fileName = command.split(' ')[1];
         const fileContent = currentDirectory[fileName].content;
         console.log(fileContent);
-
-        if (typeof fileContent === 'string') {
+        if (!currentDirectory[fileName].permissions.read) {
+          addOutput(`Permission denied. Cannot read from ${fileName}`);
+        }
+        else if (typeof fileContent === 'string') {
           addOutput(<div>{fileContent}</div>);
         } else {
           addOutput(`No such file: ${fileName}`);

@@ -22,11 +22,11 @@ const FSTree = (props) => {
             } else {
               return {
                 name: `📄 ${name}`, 
-                attributes: {
-                    Content: node.content || '(empty)',
-                    'Date Modified': node.date_modified || '(not available)'
-                },
-                children: []
+                // attributes: {
+                //     Content: node.content || '(empty)',
+                //     'Date Modified': node.date_modified || '(not available)'
+                // },
+                // children: []
             };
             }
             
@@ -40,21 +40,6 @@ const FSTree = (props) => {
   };
 
     const treeData = useMemo(() => transformToTreeData(currentDirectory), [currentDirectory]);
-
-
-    const [translate, setTranslate] = useState({ x: 200, y: 50 });
-
-    const handleNodeClick = (nodeData, evt) => {
-        const svgElement = evt.target.closest('svg'); // Find the SVG container
-        const { width, height } = svgElement.getBoundingClientRect();
-    
-        const { x, y } = nodeData.__rd3t.coordinates; // Extract node coordinates
-        setTranslate({
-          x: width / 2 - x,
-          y: height / 2 - y,
-        });
-      };
-
     return (
         <div style={{ 
             height: '50vh', 
@@ -69,10 +54,9 @@ const FSTree = (props) => {
   {treeData ? (
     <Tree
       data={treeData}
-      orientation="vertical"
-      translate={translate}
-      onNodeClick={handleNodeClick}
-      pathFunc="straight"
+      depthFactor={300}
+      orientation="horizontal"
+      pathFunc="step"
       renderCustomNodeElement={({ nodeDatum }) => <Nodes nodeDatum={nodeDatum} />}
       styles={{
         nodes: {
