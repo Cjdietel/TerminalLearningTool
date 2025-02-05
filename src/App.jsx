@@ -1,7 +1,7 @@
 import Terminal from './components/Terminal';
 import './App.css';
 import { useState, useEffect } from 'react';
-import JSZip from 'jszip';
+import JSZip, { file } from 'jszip';
 import JSZipUtils from 'jszip-utils';
 import config from './config.json';
 import ProblemPanel from './components/ProblemPanel';
@@ -18,14 +18,13 @@ function App() {
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const [userName, setUserName] = useState('');
   const [showPopup, setShowPopup] = useState(true);
-  const [treeKey, setTreeKey] = useState(0);
+  const [fsChange, setFSChange] = useState(0);
 
 
 
   window.onbeforeunload = function() {
     return "Data will be lost if you leave the page, are you sure?";
   };
-
 
   function getRandomWord(wordList) {
     return wordList[Math.floor(Math.random() * wordList.length)];
@@ -90,9 +89,13 @@ function App() {
                 promises.push(filePromise);
               } else {
                 if (!currentLevel[randomName]) {
-                  currentLevel[randomName] = {};
+                  currentLevel[randomName] = {
+                    content: {},
+                    date_modified: new Date().toISOString(),
+                    is_file: false,
+                  };
                 }
-                currentLevel = currentLevel[randomName];
+                currentLevel = currentLevel[randomName].content;
               }
             }
           });
@@ -117,48 +120,60 @@ function App() {
       });
   }, []);
 
+  useEffect(() => {
+  }, [fsChange]);
+
+
   const addOutput = (message) => {
     setOutput(prevOutput => [...prevOutput, message]);
   };
 
 
-  const cd = (newDir) => {
-    if (newDir.is_file === true) {
-      addOutput(`No such directory: ${newDir}`);
-    }
-    else if (newDir === "..") {
-      if (currentPath !== "/") {
-        const pathArray = currentPath.split("/").filter(Boolean);
-        pathArray.pop(); // Remove last directory
-        const newPath = pathArray.length ? `/${pathArray.join("/")}` : "/";
-        setCurrentPath(newPath);
-        setCurrentDirectory(getDirectoryFromPath(newPath));
-      } else {
-        addOutput("Already at root directory.");
+  const cd = (newDirString) => {
+    try {
+      const newDir = currentDirectory[newDirString];
+      if (newDirString === "..") {
+        if (currentPath !== "/") {
+          const pathArray = currentPath.split("/").filter(Boolean);
+          pathArray.pop(); // Remove last directory
+          const newPath = pathArray.length ? `/${pathArray.join("/")}` : "/";
+          setCurrentPath(newPath);
+          setCurrentDirectory(getDirectoryFromPath(newPath));
+        } else {
+          addOutput("Already at root directory.");
+        }
       }
+      else if (newDirString === "~") {
+        setCurrentPath("/"); 
+        setCurrentDirectory(fs); 
+      }
+      else if (newDir.is_file === false) {
+        const newPath = currentPath === "/" ? `/${newDirString}` : `${currentPath}/${newDirString}`;
+        setCurrentPath(newPath);
+        console.log(newDir.name)
+        setCurrentDirectory(newDir.content);
+      } else {
+        addOutput(`No such directory: ${newDirString}`);
+      }
+    } catch (err) {
+      addOutput(`No such directory: ${newDirString}`);
     }
-    else if (newDir === "~") {
-      setCurrentPath("/"); 
-      setCurrentDirectory(fs); 
-    }
-    else if (currentDirectory[newDir]) {
-      const newPath = currentPath === "/" ? `/${newDir}` : `${currentPath}/${newDir}`;
-      setCurrentPath(newPath);
-      setCurrentDirectory(currentDirectory[newDir]);
-    } else {
-      addOutput(`No such directory: ${newDir}`);
-    }
+    
   };
 
   const mkdir = (newDir) => {
     if (!currentDirectory[newDir]) {
-      currentDirectory[newDir] = {}
-      // console.log('1')
+      currentDirectory[newDir] = {
+        content: {},
+        date_modified: new Date().toISOString(),
+        is_file: false,
+      }
     }
     else {
       addOutput(`Directory already exists: ${newDir}`)
       // console.log('0')
     }
+    setFSChange(prev => prev + 1);
   }
 
   const rmdir = (dirToDelete) => {
@@ -170,10 +185,10 @@ function App() {
       addOutput(`Directory does not exist: ${dirToDelete}`)
       // console.log('0')
     }
+    setFSChange(prev => prev + 1);
   }
 
   const touch = (newFileName) => {
-    setTreeKey(prevKey => prevKey + 1);
     // console.log(newFileName)
     if (!currentDirectory[newFileName]) {
       currentDirectory[newFileName] = {
@@ -190,12 +205,12 @@ function App() {
     else {
       currentDirectory[newFileName].date_modified = Date() // updates the touched file date_modified to the current date (destructive, changes the original object)
     }
-
+    setFSChange(prev => prev + 1);
   }
 
   const echo = (text, operator, file) => {
     if (operator === '>') {
-      console.log(file)
+      // console.log(file)
       currentDirectory[file].content = text
       currentDirectory[file].date_modified = Date()
     }
@@ -263,7 +278,7 @@ function App() {
         currentPath={currentPath}
         />
         <FSTree 
-        treeKey={treeKey}
+        fsChange={fsChange}
         currentDirectory={currentDirectory}
         currentPath={currentPath}
         />

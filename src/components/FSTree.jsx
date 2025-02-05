@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Tree from 'react-d3-tree';
 import Nodes from './Nodes.jsx';
 
@@ -7,7 +7,7 @@ const FSTree = (props) => {
     const {
         currentDirectory,
         currentPath,
-        treeKey
+        fsChange,
     } = props;
     // console.log(currentPath);
 
@@ -15,18 +15,13 @@ const FSTree = (props) => {
         if (!directory) return null;
 
         const transformNode = (node, name) => {
-            if (typeof node === 'object' && node.content === undefined) {
+            if (node.is_file === false) {
                 return {
                     name: `📁 ${name}`,
                 };
             } else {
               return {
                 name: `📄 ${name}`, 
-                // attributes: {
-                //     Content: node.content || '(empty)',
-                //     'Date Modified': node.date_modified || '(not available)'
-                // },
-                // children: []
             };
             }
             
@@ -38,8 +33,10 @@ const FSTree = (props) => {
             ),
         };
   };
-
-    const treeData = useMemo(() => transformToTreeData(currentDirectory), [currentDirectory]);
+// useEffect(() => {
+// }, [fsChange]);
+const treeData = useMemo(() => transformToTreeData(currentDirectory), [currentDirectory, fsChange]);
+    
     return (
         <div style={{ 
             height: '50vh', 
