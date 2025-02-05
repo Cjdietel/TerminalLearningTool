@@ -189,10 +189,10 @@ function App() {
   }
 
   const touch = (newFileName) => {
-    // console.log(newFileName)
+    console.log(newFileName)
     if (!currentDirectory[newFileName]) {
       currentDirectory[newFileName] = {
-        content: content,
+        content: "",
         date_modified: new Date().toISOString(),
         is_file: true,
         permissions: {
