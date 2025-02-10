@@ -258,7 +258,7 @@ function App() {
             rmdir={rmdir}
             touch={touch}
             echo={echo}
-            
+            fs={fs}
           />
         )}
       </div>
