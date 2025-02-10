@@ -29,7 +29,7 @@ const commands = {
 };
 
 const handleCommand = (command, props) => {
-  const [cmd, ...args] = command.match(/(?:"[^"]*")|(?:'[^']*')|\S+/g) || [];
+  const [cmd, ...args] = command.match(/(?:"[^"]*")|(?:'[^']*')|\S+/g) || []; // regex to break up command into array of substrings
   if (commands[cmd]) {
     commands[cmd](args, props);
   } else {

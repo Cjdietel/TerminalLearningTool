@@ -83,18 +83,16 @@ const Terminal = (props) => {
         setInput('');
       }
     } else if (e.key === 'Tab') {
-      e.preventDefault(); // Prevent default tab behavior (focus shift)
+      e.preventDefault();
   
       const parts = input.split(' ');
-      const partial = parts[parts.length - 1]; // Last word being typed
+      const partial = parts[parts.length - 1];
       const matches = Object.keys(currentDirectory).filter(name => name.startsWith(partial));
   
       if (matches.length === 1) {
-        // Single match: Auto-complete
         parts[parts.length - 1] = matches[0];
         setInput(parts.join(' '));
       } else if (matches.length > 1) {
-        // Multiple matches: Show possible completions
         addOutput(matches.join(' '));
       }
     }
