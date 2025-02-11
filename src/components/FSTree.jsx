@@ -7,20 +7,13 @@ const FSTree = ({ currentDirectory, currentPath, fsChange }) => {
         if (!directory) return [];
 
         const transformNode = (node, name) => {
-            const treeNode = {
+            return {
                 key: name,
                 label: node.is_file ? `📄 ${name}` : `📁 ${name}`,
                 data: name,
                 selectable: false,
+                children: node.is_file ? undefined : [], // Prevents collapsible arrows
             };
-
-            if (!node.is_file && node.children) {
-                treeNode.children = Object.entries(node.children).map(([key, value]) => 
-                    transformNode(value, key)
-                );
-            }
-            
-            return treeNode;
         };
 
         return [{
@@ -31,6 +24,7 @@ const FSTree = ({ currentDirectory, currentPath, fsChange }) => {
     };
 
     const treeData = useMemo(() => transformToTreeData(currentDirectory), [currentDirectory, fsChange]);
+
 
     return (
         <div style={{ 
@@ -43,7 +37,9 @@ const FSTree = ({ currentDirectory, currentPath, fsChange }) => {
             justifyContent: 'center',
         }}>
             {treeData.length > 0 ? (
-                <Tree value={treeData} expandedKeys={{ root: true }} toggleable onlyRootSelectable />
+                <Tree value={treeData} style={{
+                  fontSize: '1.5em',
+                }} />
             ) : (
                 <div style={{ color: '#F1AB86', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
                     <h1 style={{ fontSize: '2em' }}>No Data</h1>
