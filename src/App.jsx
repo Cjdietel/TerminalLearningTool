@@ -39,15 +39,15 @@ function App() {
         JSZip.loadAsync(data).then(async function (zip) {
           const fs = {
             content: {},
-            // date_modified: new Date().toISOString(),
-            // is_file: false,
+            date_modified: new Date().toISOString(),
+            is_file: false,
           };
           const promises = [];
           const nameMapping = {}; // Maps original names to random names
           
           // Load the word list
           const wordListResponse = await fetch(config.wordList);
-          const wordListText = await wordListResponse.text();
+          const wordListText = await wordListResponse.text(); 
           const wordList = wordListText.split("\n").map(word => word.trim()).filter(Boolean);
   
           zip.forEach(function (path, entry) {
@@ -55,7 +55,7 @@ function App() {
               ? entry.name.slice(0, -1).split('/')
               : entry.name.split('/');
   
-            let currentLevel = fs;
+            let currentLevel = fs.content;
             for (let i = 0; i < filePathArray.length; i++) {
               let originalName = filePathArray[i];
   
@@ -103,7 +103,7 @@ function App() {
               }
             }
           });
-
+          console.log(fs)
           Promise.all(promises)
             .then(() => resolve(fs))
             .catch(reject);
@@ -116,8 +116,8 @@ function App() {
   useEffect(() => {
     createFSObject()
       .then((fileSystem) => {
-        setFs(fileSystem);
-        setCurrentDirectory(fileSystem); // Start at root
+        setFs(fileSystem.content);
+        setCurrentDirectory(fileSystem.content); // Start at root
       })
       .catch((error) => {
         addOutput(`Error creating file system object: ${error.message}`);
@@ -144,9 +144,12 @@ function App() {
           pathArray.pop();
           const newPath = pathArray.length ? `/${pathArray.join("/")}` : "/";
           setCurrentPath(newPath);
-          const newDirectory = getDirectoryFromPath(newPath);
-          // console.log(newDirectory.content);
-          setCurrentDirectory(newDirectory.content);
+          if (newPath === "/") {
+            setCurrentDirectory(fs);
+          } else {
+            const newDirectory = getDirectoryFromPath(newPath);
+            setCurrentDirectory(newDirectory.content);
+          }
         } else {
           addOutput("Already at root directory.");
         }
@@ -156,9 +159,10 @@ function App() {
         setCurrentDirectory(fs); 
       }
       else if (newDir.is_file === false) {
+        // console.log(newDir.name)
         const newPath = currentPath === "/" ? `/${newDirString}` : `${currentPath}/${newDirString}`;
         setCurrentPath(newPath);
-        console.log(newDir.name)
+       
         setCurrentDirectory(newDir.content);
       } else {
         addOutput(`No such directory: ${newDirString}`);
