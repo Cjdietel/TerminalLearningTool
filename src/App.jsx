@@ -55,7 +55,7 @@ function App() {
               ? entry.name.slice(0, -1).split('/')
               : entry.name.split('/');
   
-            let currentLevel = fs.content;
+            let currentLevel = fs;
             for (let i = 0; i < filePathArray.length; i++) {
               let originalName = filePathArray[i];
   
