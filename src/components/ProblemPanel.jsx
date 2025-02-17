@@ -3,6 +3,8 @@ import { problems, checkAnswer } from "../Problems";
 import Terminal from './Terminal';
 import classNames from 'classnames';
 import "./ProblemPanel.css";
+import confetti from 'canvas-confetti';
+
 
 const ProblemPanel = ({ 
   currentProblemIndex, 
@@ -171,6 +173,13 @@ export const validateCommand = async (
   }
 
   if (checkAnswer(fs, command, currentProblem, currentProblemIndex, setCurrentProblemIndex)) {
+    console.log("shooting")
+    confetti({
+      particleCount: 1000,
+      spread: 500,
+      origin: { y: 0.9, x: 0.5 },
+    });
+
     const updatedProblems = {...problems};
     updatedProblems[currentProblemKey].isComplete = true;
     // setProblems(updatedProblems);
@@ -186,3 +195,4 @@ export const validateCommand = async (
     console.log("try again");
   }
 };
+

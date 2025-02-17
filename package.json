@@ -19,6 +19,7 @@
     "@mui/icons-material": "^6.3.0",
     "@mui/material": "^6.3.0",
     "babel": "^5.8.38",
+    "canvas-confetti": "^1.9.3",
     "classnames": "^2.5.1",
     "jszip": "^3.10.1",
     "jszip-utils": "^0.1.0",
