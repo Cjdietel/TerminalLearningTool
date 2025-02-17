@@ -29,7 +29,7 @@ const Terminal = (props) => {
   const inputRef = useRef(null);
 
   useEffect(() => {
-    console.log(currentDirectory);
+    // console.log(currentDirectory);
   }, [currentDirectory]);
 
   useEffect(() => {

@@ -37,7 +37,11 @@ function App() {
           return reject(err);
         }
         JSZip.loadAsync(data).then(async function (zip) {
-          const fs = {};
+          const fs = {
+            content: {},
+            // date_modified: new Date().toISOString(),
+            // is_file: false,
+          };
           const promises = [];
           const nameMapping = {}; // Maps original names to random names
           
@@ -51,7 +55,7 @@ function App() {
               ? entry.name.slice(0, -1).split('/')
               : entry.name.split('/');
   
-            let currentLevel = fs;
+            let currentLevel = fs.content;
             for (let i = 0; i < filePathArray.length; i++) {
               let originalName = filePathArray[i];
   
@@ -99,7 +103,7 @@ function App() {
               }
             }
           });
-  
+
           Promise.all(promises)
             .then(() => resolve(fs))
             .catch(reject);
@@ -132,13 +136,17 @@ function App() {
   const cd = (newDirString) => {
     try {
       const newDir = currentDirectory[newDirString];
+      // console.log(newDir)
       if (newDirString === "..") {
         if (currentPath !== "/") {
           const pathArray = currentPath.split("/").filter(Boolean);
-          pathArray.pop(); // Remove last directory
+          // console.log(pathArray)
+          pathArray.pop();
           const newPath = pathArray.length ? `/${pathArray.join("/")}` : "/";
           setCurrentPath(newPath);
-          setCurrentDirectory(getDirectoryFromPath(newPath));
+          const newDirectory = getDirectoryFromPath(newPath);
+          // console.log(newDirectory.content);
+          setCurrentDirectory(newDirectory.content);
         } else {
           addOutput("Already at root directory.");
         }
