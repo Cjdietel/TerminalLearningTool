@@ -1,16 +1,17 @@
 import { useState } from 'react';
-import problems from "../Problems.json";
+import { problems, checkAnswer } from "../Problems";
 import Terminal from './Terminal';
 import classNames from 'classnames';
 import "./ProblemPanel.css";
 
 const ProblemPanel = ({ 
   currentProblemIndex, 
-  setCurrentProblemIndex,   
+  setCurrentProblemIndex,  
 }) => {
 
   const problemKeys = Object.keys(problems);
   const currentProblemKey = problemKeys[currentProblemIndex];
+  console.log(currentProblemIndex)
   const currentProblem = problems[currentProblemKey];
 
 
@@ -38,7 +39,6 @@ const ProblemPanel = ({
       currentProblem.isComplete = false;
     }
   };
-
 
   const glowClass = currentProblem.isComplete ? 'green-glow' : 'red-glow';
 
@@ -152,11 +152,12 @@ export default ProblemPanel;
 
 */
 
-export const validateCommand = (
+export const validateCommand = async (
   command, 
   currentProblemIndex, 
   setCurrentProblemIndex, 
-  problems,  
+  problems,
+  fs
 ) => {
   const problemKeys = problems ? Object.keys(problems) : [];
   const currentProblemKey = problemKeys[currentProblemIndex];
@@ -169,12 +170,13 @@ export const validateCommand = (
     return;
   }
 
-  if (command === currentProblem.answer) {
+  if (checkAnswer(fs, command, currentProblem, currentProblemIndex, setCurrentProblemIndex)) {
     const updatedProblems = {...problems};
     updatedProblems[currentProblemKey].isComplete = true;
-    setProblems(updatedProblems);
+    // setProblems(updatedProblems);
     console.log("completed");
 
+    await new Promise(resolve => setTimeout(resolve, 2000));
     if (currentProblemIndex < problemKeys.length - 1) {
       setCurrentProblemIndex(currentProblemIndex + 1);
     } else {

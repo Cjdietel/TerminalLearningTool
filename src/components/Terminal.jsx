@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../Terminal.css';
 import { validateCommand } from './ProblemPanel';
-import problems from '../Problems.json';
+import { problems } from '../Problems';
 import handleCommand from './handleCommand';
 
 const Terminal = (props) => {
@@ -68,7 +68,7 @@ const Terminal = (props) => {
       });
   
       setInput('');
-      validateCommand(command, currentProblemIndex, setCurrentProblemIndex, problems);
+      validateCommand(command, currentProblemIndex, setCurrentProblemIndex, problems, fs);
     } else if (e.key === 'ArrowUp') {
       if (historyIndex > 0) {
         setHistoryIndex(historyIndex - 1);
