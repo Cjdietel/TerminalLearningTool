@@ -41,6 +41,11 @@ function App() {
             content: {},
             date_modified: new Date().toISOString(),
             is_file: false,
+            permissions: {
+              read: true,
+              write: true,
+              execute: true
+            }
           };
           const promises = [];
           const nameMapping = {}; // Maps original names to random names
@@ -84,9 +89,9 @@ function App() {
                     date_modified: new Date().toISOString(),
                     is_file: true,
                     permissions: {
-                      read: false,
+                      read: true,
                       write: true,
-                      execute: false
+                      execute: true
                     }
                   };
                 });
@@ -97,6 +102,11 @@ function App() {
                     content: {},
                     date_modified: new Date().toISOString(),
                     is_file: false,
+                    permissions: {
+                      read: true,
+                      write: true,
+                      execute: true
+                    }
                   };
                 }
                 currentLevel = currentLevel[randomName].content;

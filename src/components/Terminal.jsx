@@ -68,6 +68,7 @@ const Terminal = (props) => {
       });
   
       setInput('');
+      console.log(fs)
       validateCommand(command, currentProblemIndex, setCurrentProblemIndex, problems, fs);
     } else if (e.key === 'ArrowUp') {
       if (historyIndex > 0) {
