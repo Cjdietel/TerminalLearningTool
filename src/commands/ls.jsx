@@ -7,16 +7,22 @@ const lsCommand = (args, { currentDirectory, addOutput }) => {
     .flatMap(arg => arg.slice(1).split('').map(flag => `-${flag}`));
   let filesAndDirs;
   if (flags.length == 0) {
-    filesAndDirs = Object.keys(currentDirectory).map(name => (
-      <span key={name} style={{ color: currentDirectory[name].is_file ? 'lightblue' : 'inherit', marginRight: '0.5em' }}>
+    filesAndDirs = Object.keys(currentDirectory)
+    .filter(name => !currentDirectory[name].is_hidden)
+    .map(name => (
+      <span>
+        <span key={name} style={{ color: currentDirectory[name].is_file ? 'lightblue' : 'inherit', marginRight: '0.5em' }}>
         {name}
+        </span>
       </span>
     ));
   } else {
     for (let i = 0; i < flags.length; i++) {
       if (flags[i] === '-l') {
         console.log(flags)
-        filesAndDirs = Object.keys(currentDirectory).map(name => (
+        filesAndDirs = Object.keys(currentDirectory)
+        .filter(name => !currentDirectory[name].is_hidden)
+        .map(name => (
           <div key={name}>
             {currentDirectory[name].is_file ? 'd' : '-'}
             {currentDirectory[name].permissions.read ? 'r' : '-'}
@@ -24,16 +30,25 @@ const lsCommand = (args, { currentDirectory, addOutput }) => {
             {currentDirectory[name].permissions.execute ? 'x' : '-'}
             {currentDirectory[name].is_file ? ' 1 ' : ' 2 '}
             {currentDirectory[name].date_modified}
-            <span style={{ color: currentDirectory[name].is ? 'lightblue' : 'inherit', marginRight: '0.5em' }}>
+            <span> </span>
+            <span style={{ color: currentDirectory[name].is_file ? 'lightblue' : 'inherit', marginRight: '0.5em' }}>
               {name}
             </span>
           </div>
         ));
       }
       else if (flags[i] === '-a') {
-        console.log('all files')
-      }
-      else {
+        // console.log('all files')
+        
+        filesAndDirs = Object.keys(currentDirectory).map(name => (
+          <span>
+            <span key={name} style={{ color: currentDirectory[name].is_file ? 'lightblue' : 'inherit', marginRight: '0.5em' }}>
+              {name}
+            </span>
+          </span>
+        ));
+        filesAndDirs = <div>. .. {filesAndDirs}</div>
+      } else {
         console.log('invalid flag')
       }
     }

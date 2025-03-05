@@ -30,98 +30,115 @@ function App() {
     return wordList[Math.floor(Math.random() * wordList.length)];
   }
   
+
   function createFSObject() {
     return new Promise((resolve, reject) => {
-      JSZipUtils.getBinaryContent(config.zippedFolder, function (err, data) {
-        if (err) {
-          return reject(err);
-        }
-        JSZip.loadAsync(data).then(async function (zip) {
-          const fs = {
-            content: {},
-            date_modified: new Date().toISOString(),
-            is_file: false,
-            permissions: {
-              read: true,
-              write: true,
-              execute: true
+        JSZipUtils.getBinaryContent(config.zippedFolder, function (err, data) {
+            if (err) {
+                return reject(err);
             }
-          };
-          const promises = [];
-          const nameMapping = {}; // Maps original names to random names
-          
-          // Load the word list
-          const wordListResponse = await fetch(config.wordList);
-          const wordListText = await wordListResponse.text(); 
-          const wordList = wordListText.split("\n").map(word => word.trim()).filter(Boolean);
-  
-          zip.forEach(function (path, entry) {
-            let filePathArray = entry.name.endsWith('/')
-              ? entry.name.slice(0, -1).split('/')
-              : entry.name.split('/');
-  
-            let currentLevel = fs.content;
-            for (let i = 0; i < filePathArray.length; i++) {
-              let originalName = filePathArray[i];
-  
-              // Handle files separately
-              let randomName;
-              if (originalName.includes('.')) {
-                let parts = originalName.split('.');
-                let extension = parts.pop(); // Extract extension
-                let baseName = parts.join('.'); // Remaining name
-  
-                if (!nameMapping[baseName]) {
-                  nameMapping[baseName] = getRandomWord(wordList);
-                }
-                randomName = `${nameMapping[baseName]}.${extension}`; // Preserve extension
-              } else {
-                if (!nameMapping[originalName]) {
-                  nameMapping[originalName] = getRandomWord(wordList);
-                }
-                randomName = nameMapping[originalName];
-              }
-  
-              if (randomName.includes('.')) {
-                const filePromise = entry.async("string").then((content) => {
-                  currentLevel[randomName] = {
-                    content: content,
-                    date_modified: new Date().toISOString(),
-                    is_file: true,
-                    permissions: {
-                      read: true,
-                      write: true,
-                      execute: true
-                    }
-                  };
-                });
-                promises.push(filePromise);
-              } else {
-                if (!currentLevel[randomName]) {
-                  currentLevel[randomName] = {
+            JSZip.loadAsync(data).then(async function (zip) {
+                const fs = {
                     content: {},
                     date_modified: new Date().toISOString(),
                     is_file: false,
+                    is_hidden: false,
                     permissions: {
-                      read: true,
-                      write: true,
-                      execute: true
+                        read: true,
+                        write: true,
+                        execute: true
                     }
-                  };
-                }
-                currentLevel = currentLevel[randomName].content;
-              }
-            }
-          });
-          console.log(fs)
-          Promise.all(promises)
-            .then(() => resolve(fs))
-            .catch(reject);
+                };
+                const promises = [];
+                const nameMapping = {}; // Maps original names to random names
+
+                // Load the word list
+                const wordListResponse = await fetch(config.wordList);
+                const wordListText = await wordListResponse.text();
+                const wordList = wordListText.split("\n").map(word => word.trim()).filter(Boolean);
+
+                zip.forEach(function (path, entry) {
+                    let filePathArray = entry.name.endsWith('/')
+                        ? entry.name.slice(0, -1).split('/')
+                        : entry.name.split('/');
+
+                    let currentLevel = fs.content;
+                    for (let i = 0; i < filePathArray.length; i++) {
+                        let originalName = filePathArray[i];
+
+                        // Generate a random name for both files and directories
+                        let randomName;
+                        if (!nameMapping[originalName]) {
+                            nameMapping[originalName] = getRandomWord(wordList);
+                        }
+                        randomName = nameMapping[originalName];
+
+                        // Check if it's the last item in the path (the file or directory itself)
+                        const isLastItem = i === filePathArray.length - 1;
+                        const isHidden = originalName.startsWith(".");
+
+                        if (isLastItem) {
+                            if (entry.dir) {
+                                // Directory
+                                if (!currentLevel[randomName]) {
+                                    currentLevel[randomName] = {
+                                        content: {},
+                                        date_modified: new Date().toISOString(),
+                                        is_file: false, // Mark it as a directory
+                                        is_hidden: isHidden,
+                                        permissions: {
+                                            read: true,
+                                            write: true,
+                                            execute: true
+                                        }
+                                    };
+                                }
+                            } else {
+                                // File
+                                const filePromise = entry.async("string").then((content) => {
+                                    currentLevel[randomName] = {
+                                        content: content,
+                                        date_modified: new Date().toISOString(),
+                                        is_file: true, // Mark it as a file
+                                        is_hidden: isHidden,
+                                        permissions: {
+                                            read: true,
+                                            write: true,
+                                            execute: true
+                                        }
+                                    };
+                                });
+                                promises.push(filePromise);
+                            }
+                        } else {
+                            // Ensure the directory structure exists
+                            if (!currentLevel[randomName]) {
+                                currentLevel[randomName] = {
+                                    content: {},
+                                    date_modified: new Date().toISOString(),
+                                    is_file: false, // It's an intermediate directory
+                                    is_hidden: isHidden,
+                                    permissions: {
+                                        read: true,
+                                        write: true,
+                                        execute: true
+                                    }
+                                };
+                            }
+                            currentLevel = currentLevel[randomName].content;
+                        }
+                    }
+                });
+
+                Promise.all(promises)
+                    .then(() => resolve(fs))
+                    .catch(reject);
+            });
         });
-      });
     });
-  }
-  
+}
+
+
 
   useEffect(() => {
     createFSObject()
@@ -189,6 +206,12 @@ function App() {
         content: {},
         date_modified: new Date().toISOString(),
         is_file: false,
+        is_hidden: newDir.startsWith('.'),
+        permissions: {
+          read: true,
+          write: true,
+          execute: true
+        }
       }
     }
     else {
@@ -217,6 +240,7 @@ function App() {
         content: "",
         date_modified: new Date().toISOString(),
         is_file: true,
+        is_hidden: newFileName.startsWith('.'),
         permissions: {
           read: false,
           write: true,
