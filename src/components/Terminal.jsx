@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../Terminal.css';
 import { validateCommand } from './ProblemPanel';
-import { problems } from '../Problems';
 import handleCommand from './handleCommand';
 
 const Terminal = (props) => {
@@ -21,16 +20,16 @@ const Terminal = (props) => {
     rmdir, 
     touch, 
     echo,
-    fs
+    fs,
+    problems,
+    setProblems
   } = props;
+
   const [input, setInput] = useState('');
   const [history, setHistory] = useState([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
+  const [lastCommand, setLastCommand] = useState(''); // Track the last executed command
   const inputRef = useRef(null);
-
-  useEffect(() => {
-    // console.log(currentDirectory);
-  }, [currentDirectory]);
 
   useEffect(() => {
     const handleMouseClick = () => {
@@ -51,7 +50,7 @@ const Terminal = (props) => {
       addOutput(`(${userName}@TerminalLearningTool)-[${currentPath}]$ ${command}`);
       setHistory([...history, command]);
       setHistoryIndex(history.length);
-  
+
       handleCommand(command, {
         currentDirectory,
         currentPath,
@@ -66,10 +65,9 @@ const Terminal = (props) => {
         echo,
         fs
       });
-  
+
       setInput('');
-      console.log(fs)
-      validateCommand(command, currentProblemIndex, setCurrentProblemIndex, problems, fs);
+      setLastCommand(command); // Update the last executed command
     } else if (e.key === 'ArrowUp') {
       if (historyIndex > 0) {
         setHistoryIndex(historyIndex - 1);
@@ -85,11 +83,11 @@ const Terminal = (props) => {
       }
     } else if (e.key === 'Tab') {
       e.preventDefault();
-  
+
       const parts = input.split(' ');
       const partial = parts[parts.length - 1];
       const matches = Object.keys(currentDirectory).filter(name => name.startsWith(partial));
-  
+
       if (matches.length === 1) {
         parts[parts.length - 1] = matches[0];
         setInput(parts.join(' '));
@@ -98,7 +96,14 @@ const Terminal = (props) => {
       }
     }
   };
-  
+
+  // Validate the command after currentPath updates
+  useEffect(() => {
+    if (lastCommand) {
+      validateCommand(lastCommand, currentProblemIndex, setCurrentProblemIndex, problems, setProblems, fs, currentPath);
+    }
+  }, [lastCommand]);
+
   return (
     <div className="terminal">
       <div className="output">

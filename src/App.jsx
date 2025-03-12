@@ -6,6 +6,7 @@ import JSZipUtils from 'jszip-utils';
 import config from './config.json';
 import ProblemPanel from './components/ProblemPanel';
 import FSTree from './components/FSTree'
+import { generateProblems } from './Problems';
 import UsernamePopup from './components/UsernamePopup';
 
 
@@ -14,12 +15,11 @@ function App() {
   const [currentDirectory, setCurrentDirectory] = useState(null); // The current directory object
   const [currentPath, setCurrentPath] = useState("/"); // String to hold the current path
   const [output, setOutput] = useState([]); // Output state to hold terminal messages
-  // const [problems, setProblems] = useState();
+  const [problems, setProblems] = useState({});
   const [currentProblemIndex, setCurrentProblemIndex] = useState(0);
   const [userName, setUserName] = useState('');
   const [showPopup, setShowPopup] = useState(true);
   const [fsChange, setFSChange] = useState(0);
-
 
 
   window.onbeforeunload = function() {
@@ -140,26 +140,35 @@ function App() {
 
 
 
-  useEffect(() => {
-    createFSObject()
-      .then((fileSystem) => {
-        setFs(fileSystem.content);
-        setCurrentDirectory(fileSystem.content); // Start at root
-      })
-      .catch((error) => {
-        addOutput(`Error creating file system object: ${error.message}`);
-      });
-  }, []);
+useEffect(() => {
+  createFSObject()
+    .then((fileSystem) => {
+      setFs(fileSystem.content);
+      setCurrentDirectory(fileSystem.content);
+      setProblems(generateProblems(fileSystem.content));
+    })
+    .catch((error) => {
+      addOutput(`Error creating file system object: ${error.message}`);
+    });
+}, []);
 
-  useEffect(() => {
-  }, [fsChange]);
+  // useEffect(() => {
+  // }, [fsChange]);
 
-
+  // useEffect(() => {
+  //     // const generatedProblems = generateProblems(fs);
+  //     if (fs)
+  //     {
+  //       setProblems(generateProblems(fs));
+  //       console.log(problems);
+  //       setTimeout(() => {}, 100);
+  //       }
+  // }, [fs]); // Re-run only when fs changes
   const addOutput = (message) => {
     setOutput(prevOutput => [...prevOutput, message]);
   };
 
-
+  // console.log(fs)
   const cd = (newDirString) => {
     try {
       const newDir = currentDirectory[newDirString];
@@ -305,6 +314,8 @@ function App() {
             touch={touch}
             echo={echo}
             fs={fs}
+            problems={problems}
+            setProblems={setProblems}
           />
         )}
       </div>
@@ -317,12 +328,15 @@ function App() {
           height: "100%"
         }}
       >
-        <ProblemPanel
+        {(fs && <ProblemPanel
         currentProblemIndex={currentProblemIndex}
         setCurrentProblemIndex={setCurrentProblemIndex}
         currentDirectory={currentDirectory}
         currentPath={currentPath}
-        />
+        problems={problems}
+        setProblems={setProblems}
+        fs={fs}
+        />)}
         <FSTree 
         fsChange={fsChange}
         currentDirectory={currentDirectory}
