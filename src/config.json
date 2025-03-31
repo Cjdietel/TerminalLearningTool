@@ -1,4 +1,4 @@
 {
-    "zippedFolder" : "../public/zipped.zip",
+    "zippedFolder" : "zipped.zip",
     "wordList" : "../name_dictionary.txt"
 }
