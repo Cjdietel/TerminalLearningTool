@@ -1,8 +1,12 @@
 import Terminal from './components/Terminal';
 import './App.css';
 import { useState, useEffect } from 'react';
-import JSZip, { file } from 'jszip';
-import JSZipUtils from 'jszip-utils';
+import { file } from 'jszip';
+const JSZipUtils = await import('jszip-utils');
+const JSZip = await import('jszip');
+// const JSZip = await import('jszip/dist/jszip')
+// const JsZip = await import('jszip/dist/jszip')
+// const JSZipUtils = new JsZip.default();
 import config from './config.json';
 import ProblemPanel from './components/ProblemPanel';
 import FSTree from './components/FSTree'
