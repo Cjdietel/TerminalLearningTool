@@ -47,7 +47,7 @@ const Terminal = (props) => {
   const handleInput = (e) => {
     if (e.key === 'Enter') {
       const command = input.trim();
-      addOutput(`(${userName}@TerminalLearningTool)-[${currentPath}]$ ${command}`);
+      addOutput(`(${userName}@ShellSim)-[${currentPath}]$ ${command}`);
       setHistory([...history, command]);
       setHistoryIndex(history.length);
 
