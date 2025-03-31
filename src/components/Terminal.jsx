@@ -112,7 +112,7 @@ const Terminal = (props) => {
         ))}
       </div>
       <div className="input-container">
-        <div style={{ paddingRight: "0.5em" }}>{`(${userName}@TerminalLearningTool)-[${currentPath}]$`}</div>
+        <div style={{ paddingRight: "0.5em" }}>{`(${userName}@ShellSim)-[${currentPath}]$`}</div>
         <div style={{ overflowWrap: "anywhere", flexGrow: "1" }}>
           <input
             type="text"
