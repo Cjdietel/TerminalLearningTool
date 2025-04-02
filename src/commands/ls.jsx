@@ -5,6 +5,15 @@ const lsCommand = (args, { currentDirectory, addOutput }) => {
   let flags = args
     .filter(arg => arg.startsWith('-'))
     .flatMap(arg => arg.slice(1).split('').map(flag => `-${flag}`));
+
+
+  // let directory = currentDirectory
+  // console.log(directory)
+  if (args.length > 0) {
+    // directory = currentDirectory.args[0];
+    currentDirectory = currentDirectory[Object.keys(currentDirectory)[0]].content
+  }
+
   let filesAndDirs;
   if (flags.length == 0) {
     filesAndDirs = Object.keys(currentDirectory)

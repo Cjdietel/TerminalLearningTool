@@ -12,6 +12,7 @@ import ProblemPanel from './components/ProblemPanel';
 import FSTree from './components/FSTree'
 import { generateProblems } from './Problems';
 import UsernamePopup from './components/UsernamePopup';
+import { getRandomWord } from './utils';
 
 
 function App() {
@@ -29,11 +30,6 @@ function App() {
   window.onbeforeunload = function() {
     return "Data will be lost if you leave the page, are you sure?";
   };
-
-  function getRandomWord(wordList) {
-    return wordList[Math.floor(Math.random() * wordList.length)];
-  }
-  
 
   function createFSObject() {
     return new Promise((resolve, reject) => {
@@ -140,7 +136,7 @@ function App() {
             });
         });
     });
-}
+  }
 
 
 
@@ -350,5 +346,6 @@ useEffect(() => {
     </div>
   );
 }
+
 
 export default App;

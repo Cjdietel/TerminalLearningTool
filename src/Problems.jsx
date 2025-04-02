@@ -1,3 +1,11 @@
+import { getRandomWord } from './utils';
+import config from './config.json';
+
+
+const wordListResponse = await fetch(config.wordList);
+const wordListText = await wordListResponse.text();
+const wordList = wordListText.split("\n").map(word => word.trim()).filter(Boolean)
+
 /**
  * Recursively traverses the file system to collect file and directory paths.
  * @param {Object} fs - The file system object.
@@ -62,24 +70,28 @@ function traverseFileSystem(fs, path = '', files = [], directories = []) {
     });
   
     // Problem type 3: Create a file or directory (check if the last segment of the path matches the answer)
-    files.forEach((file) => {
+    for (let i = 0; i < config.numType3; i++) {
+
+      let name = getRandomWord(wordList);
       problems.push({
-        problemText: `Create a new file named '${file.split('/').pop()}' in the current directory`,
+        problemText: `Create a new file named '${name}' in the current directory`,
         isComplete: false,
         points: 3,
-        answer: file.split('/').pop(),
+        answer: name,
         problemType: 3
       });
-    });
-    directories.forEach((dir) => {
+    }
+
+    for (let i = 0; i < config.numType3; i++) {
+      let name = getRandomWord(wordList);
       problems.push({
-        problemText: `Create a new directory named '${dir.split('/').pop()}' inside the current directory`,
+        problemText: `Create a new directory named '${name}' inside the current directory`,
         isComplete: false,
         points: 3,
-        answer: dir.split('/').pop(),
+        answer: name,
         problemType: 3
       });
-    });
+    }
   
     // Problem type 4: Delete a file or directory (check if the entire path matches the answer)
     files.forEach((file) => {
