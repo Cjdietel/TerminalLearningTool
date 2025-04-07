@@ -20,14 +20,14 @@
   }
   
   .popup-content {
-    background: white;
+    background: #e3e3e3;
     padding: 2em;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transform: translateY(-200%); /* Initial off-screen state */
     opacity: 0; /* Hide content initially */
   }
-  
+
   @keyframes slideInFromTop {
     from {
       transform: translateY(-200%);
