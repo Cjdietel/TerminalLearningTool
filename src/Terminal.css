@@ -28,8 +28,9 @@
     border: none;
     color: #F7DBA7;
     outline: none;
-    font-family: 'Courier New', Courier, monospace;
+    /* font-family: 'Ubuntu monospace'; */
     width: 100%;
+    font-size: 1em;
     /* overflow-wrap: anywhere; */
   }
   

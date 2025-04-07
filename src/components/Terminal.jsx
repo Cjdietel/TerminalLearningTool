@@ -120,7 +120,7 @@ const Terminal = (props) => {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleInput}
             ref={inputRef}
-            className="input"
+            className="input"            
           />
         </div>
       </div>
