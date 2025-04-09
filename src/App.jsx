@@ -10,7 +10,7 @@ import JSZipUtils from 'jszip-utils';
 import config from './config.json';
 import ProblemPanel from './components/ProblemPanel';
 import FSTree from './components/FSTree'
-import { generateProblems } from './Problems';
+import { init, generateProblems } from './Problems';
 import UsernamePopup from './components/UsernamePopup';
 import { getRandomWord } from './utils';
 
@@ -26,7 +26,7 @@ function App() {
   const [showPopup, setShowPopup] = useState(true);
   const [fsChange, setFSChange] = useState(0);
 
-
+  init()
   window.onbeforeunload = function() {
     return "Data will be lost if you leave the page, are you sure?";
   };
