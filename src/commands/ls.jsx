@@ -1,69 +1,79 @@
-import { files } from "jszip";
 
 const lsCommand = (args, { currentDirectory, addOutput }) => {
-
-  let flags = args
+  const flags = args
     .filter(arg => arg.startsWith('-'))
     .flatMap(arg => arg.slice(1).split('').map(flag => `-${flag}`));
 
+  const nonFlagArgs = args.filter(arg => !arg.startsWith('-'));
 
-  // let directory = currentDirectory
-  // console.log(directory)
-  if (args.length > 0) {
-    // directory = currentDirectory.args[0];
-    currentDirectory = currentDirectory[Object.keys(currentDirectory)[0]].content
+
+  if (nonFlagArgs.length > 0) {
+    const folderName = nonFlagArgs[0];
+    if (currentDirectory[folderName] && !currentDirectory[folderName].is_file) {
+
+      currentDirectory = currentDirectory[folderName].content;
+    } else {
+      addOutput(`No such directory: ${folderName}`);
+      return;
+    }
   }
 
   let filesAndDirs;
-  if (flags.length == 0) {
+
+  if (flags.length === 0) {
+
     filesAndDirs = Object.keys(currentDirectory)
-    .filter(name => !currentDirectory[name].is_hidden)
-    .map(name => (
-      <span>
-        <span key={name} style={{ color: currentDirectory[name].is_file ? 'lightblue' : 'inherit', marginRight: '0.5em' }}>
-        {name}
+      .filter(name => !currentDirectory[name].is_hidden)
+      .map(name => (
+        <span key={name} style={{ 
+          color: currentDirectory[name].is_file ? 'lightblue' : 'inherit', 
+          marginRight: '0.5em' 
+        }}>
+          {name}
         </span>
-      </span>
-    ));
+      ));
   } else {
-    for (let i = 0; i < flags.length; i++) {
-      if (flags[i] === '-l') {
-        console.log(flags)
-        filesAndDirs = Object.keys(currentDirectory)
+
+    if (flags.includes('-l')) {
+      filesAndDirs = Object.keys(currentDirectory)
         .filter(name => !currentDirectory[name].is_hidden)
+        .map(name => {
+          const item = currentDirectory[name];
+          return (
+            <div key={name}>
+              {item.is_file ? '-' : 'd'}
+              {item.permissions.read ? 'r' : '-'}
+              {item.permissions.write ? 'w' : '-'}
+              {item.permissions.execute ? 'x' : '-'}
+              {item.is_file ? ' 1 ' : ' 2 '}
+              {item.date_modified}
+              <span style={{ margin: '0 0.5em' }}></span>
+              <span style={{ 
+                color: item.is_file ? 'lightblue' : 'inherit'
+              }}>
+                {name}
+              </span>
+            </div>
+          );
+        });
+    } else if (flags.includes('-a')) {
+      filesAndDirs = Object.keys(currentDirectory)
         .map(name => (
-          <div key={name}>
-            {currentDirectory[name].is_file ? 'd' : '-'}
-            {currentDirectory[name].permissions.read ? 'r' : '-'}
-            {currentDirectory[name].permissions.write ? 'w' : '-'}
-            {currentDirectory[name].permissions.execute ? 'x' : '-'}
-            {currentDirectory[name].is_file ? ' 1 ' : ' 2 '}
-            {currentDirectory[name].date_modified}
-            <span> </span>
-            <span style={{ color: currentDirectory[name].is_file ? 'lightblue' : 'inherit', marginRight: '0.5em' }}>
-              {name}
-            </span>
-          </div>
-        ));
-      }
-      else if (flags[i] === '-a') {
-        // console.log('all files')
-        
-        filesAndDirs = Object.keys(currentDirectory).map(name => (
-          <span>
-            <span key={name} style={{ color: currentDirectory[name].is_file ? 'lightblue' : 'inherit', marginRight: '0.5em' }}>
-              {name}
-            </span>
+          <span key={name} style={{ 
+            color: currentDirectory[name].is_file ? 'lightblue' : 'inherit', 
+            marginRight: '0.5em' 
+          }}>
+            {name}
           </span>
         ));
-        filesAndDirs = <div>. .. {filesAndDirs}</div>
-      } else {
-        console.log('invalid flag')
-      }
+
+      filesAndDirs = <div>. .. {filesAndDirs}</div>;
+    } else {
+      console.log('invalid flag');
     }
   }
-    addOutput(<div>{filesAndDirs}</div>);
-  };
   
-  export default lsCommand;
-  
+  addOutput(<div>{filesAndDirs}</div>);
+};
+
+export default lsCommand;
