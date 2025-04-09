@@ -221,7 +221,8 @@ export const validateCommand = async (
     if (currentProblemIndex < problemKeys.length - 1) {
       setCurrentProblemIndex(currentProblemIndex + 1);
     } else {
-      console.log("all problems completed");
+      // console.log("all problems completed");
+      alert("All problems completed. Show TA for checkoff.")
     }
   } else {
     console.log("try again");

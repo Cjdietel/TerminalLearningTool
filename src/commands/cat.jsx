@@ -7,5 +7,15 @@
     }
   };
   
+  export const catMan = () => `
+    cat: Concatenate and display file content.
+
+    Usage: cat [file...]
+
+    Description: Reads each file specified and writes the contents to standard output. If no files are specified, it reads from standard input.
+
+    Example: cat file.txt
+  `;
+
   export default catCommand;
   

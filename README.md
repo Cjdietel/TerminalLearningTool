@@ -101,3 +101,27 @@ The following state can be passed through commands and used to help you in probl
 - __createOutput__ — push an output to the terminal for display
 
 Once the function is created in a .jsx file, it must be saved with the name of the function that is desired to be called. For example, __ls__ is stored in __ls.jsx__. Once the file is loaded into __src/commands__, __handleCommands.jsx__ will automatically load it into ShellSim.
+
+There are currently four types of problems. The number of times each type of problem appears in a set can be configured in the __config.json__ file. 
+
+- __Problem type 1 (numType1)__ — Display current items inside current directory.
+- __Problem type 2 (numType2)__ — Navigate to a specific location in the file system.
+- __Problem type 3 (numType3)__ — Create specific file or directory.
+- __Problem type 4 (numType4)__ — Delete specific file.
+
+The file system is generated based off of a zipped folder specified in __config.json__. Instructors can load their own by specifying the path to a different zipped folder.
+
+It is recommended that instructors create man functions for their commands. Add a second exported function to achieve this in the following format:
+
+```js
+export const commandnameMan = () => 
+    `
+    commandname:
+
+    Usage:
+    
+    Description:
+
+    Example:
+    `;
+```

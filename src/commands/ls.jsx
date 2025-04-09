@@ -76,4 +76,14 @@ const lsCommand = (args, { currentDirectory, addOutput }) => {
   addOutput(<div>{filesAndDirs}</div>);
 };
 
+export const lsMan = () => `
+  ls: List directory contents.
+  
+  Usage: ls [options] [directory]
+  
+  Description: Displays the files and directories within the specified directory. If no directory is given, it lists the contents of the current directory. Options like -l and -a can be used for detailed views or to show hidden files.
+  
+  Example: ls -a /home/user
+  `;
+
 export default lsCommand;

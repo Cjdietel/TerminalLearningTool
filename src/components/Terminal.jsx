@@ -110,7 +110,7 @@ const Terminal = (props) => {
 
   return (
     <div className="terminal">
-      <div className="output">
+      <div className="output" >
         {output.map((line, index) => (
           <div key={index}>{line}</div>
         ))}

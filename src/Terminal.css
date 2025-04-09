@@ -6,31 +6,32 @@
     background-color: #041F1E;
     color: #F7DBA7;
     font-family: 'Ubuntu monospace';
-    /* padding: 10px; */
     height: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-  }
-  
-  .output {
-    /* flex-grow: 1; */
-    overflow-y: none;
-  }
-  
-  .input-container {
+}
+
+.output {
+    white-space: pre-wrap; /* Allow newlines and wrap content */
+    overflow-wrap: break-word; /* Break long words when needed */
+    padding: 0.5em;
+}
+
+.input-container {
     display: flex;
-  }
-  
-  .input {
+    width: 100%;
+}
+
+.input {
     background: none;
     border: none;
     color: #F7DBA7;
     outline: none;
-    /* font-family: 'Ubuntu monospace'; */
     width: 100%;
     font-size: 1em;
-    /* overflow-wrap: anywhere; */
-  }
-  
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    resize: none;  /* Prevent resizing the textarea */
+}
