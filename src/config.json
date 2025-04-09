@@ -1,5 +1,8 @@
 {
     "zippedFolder" : "../zipped.zip",
     "wordList" : "../name_dictionary.txt",
-    "numType3": 5
+    "numType1": 2,
+    "numType2": 2,
+    "numType3": 2,
+    "numType4": 2
 }

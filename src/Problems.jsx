@@ -52,8 +52,16 @@ function generateProblems(fs) {
   const { files, directories } = traverseFileSystem(fs);
   const problems = [];
 
-  // Problem type 2: Navigate to a directory (using the last segment as the answer)
-  directories.forEach((dir) => {
+  // Get counts from config (or default values)
+  const numType1 = config.numType1 || 1;
+  const numType2 = config.numType2 || directories.length;
+  const numType3 = config.numType3 || 1;
+  const numType4 = config.numType4 || files.length;
+
+  // Problem type 2: Navigation problems.
+  // Randomly select numType2 directories from the available directories.
+  const shuffledDirectories = shuffleArray([...directories]);
+  shuffledDirectories.slice(0, numType2).forEach((dir) => {
     problems.push({
       problemText: `Navigate to the ${dir} folder`,
       isComplete: false,
@@ -63,19 +71,22 @@ function generateProblems(fs) {
     });
   });
 
-  // Problem type 1: Display current items (exact command match)
-  problems.push({
-    problemText: "Display current items inside the current directory",
-    isComplete: false,
-    points: 2,
-    answer: "ls",
-    problemType: 1
-  });
+  // Problem type 1: Display current items inside current directory.
+  // Create as many instances as specified in config.numType1.
+  for (let i = 0; i < numType1; i++) {
+    problems.push({
+      problemText: "Display current items inside the current directory",
+      isComplete: false,
+      points: 2,
+      answer: "ls",
+      problemType: 1
+    });
+  }
 
-  // Problem type 3: Creation problems
-  // File creation: Pick a random target directory from the directories list.
-  for (let i = 0; i < config.numType3; i++) {
-    let name = getRandomWord(wordList);
+  // Problem type 3: Creation problems.
+  // File creation problems.
+  for (let i = 0; i < numType3; i++) {
+    const name = getRandomWord(wordList);
     const targetDir = directories[Math.floor(Math.random() * directories.length)];
     problems.push({
       problemText: `Create a new file named '${name}' in directory '${targetDir}'`,
@@ -83,13 +94,12 @@ function generateProblems(fs) {
       points: 3,
       answer: name,
       problemType: 3,
-      targetPath: targetDir  // Specify the target directory where the file must be created.
+      targetPath: targetDir
     });
   }
-
-  // Directory creation: Also use a target directory.
-  for (let i = 0; i < config.numType3; i++) {
-    let name = getRandomWord(wordList);
+  // Directory creation problems.
+  for (let i = 0; i < numType3; i++) {
+    const name = getRandomWord(wordList);
     const targetDir = directories[Math.floor(Math.random() * directories.length)];
     problems.push({
       problemText: `Create a new directory named '${name}' in directory '${targetDir}'`,
@@ -101,9 +111,10 @@ function generateProblems(fs) {
     });
   }
 
-  // Problem type 4: Deletion problems
-  // For file deletion: The answer stores the full path.
-  files.forEach((file) => {
+  // Problem type 4: Deletion problems.
+  // File deletion: randomly select numType4 files.
+  const shuffledFiles = shuffleArray([...files]);
+  shuffledFiles.slice(0, numType4).forEach((file) => {
     problems.push({
       problemText: `Delete the file '${file}'`,
       isComplete: false,
@@ -112,6 +123,19 @@ function generateProblems(fs) {
       problemType: 4
     });
   });
+  // Directory deletion: randomly select numType4 directories.
+  // const shuffledDirsForDeletion = shuffleArray([...directories]);
+  // shuffledDirsForDeletion.slice(0, numType4).forEach((dir) => {
+  //   problems.push({
+  //     problemText: `Remove the directory '${dir}'`,
+  //     isComplete: false,
+  //     points: 4,
+  //     answer: dir,
+  //     problemType: 4
+  //   });
+  // });
+
+  return shuffleArray(problems);
   // // For directory deletion:
   // directories.forEach((dir) => {
   //   problems.push({
@@ -123,7 +147,7 @@ function generateProblems(fs) {
   //   });
   // });
 
-  return shuffleArray(problems);
+  // return shuffleArray(problems);
 }
 
 /**
