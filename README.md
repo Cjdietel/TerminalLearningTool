@@ -16,7 +16,7 @@ ShellSim is an interactive web-based Linux terminal built to help students learn
 
   ### Supported Commands:
   - cd
-  - ls
+  - ls (flags -l and -a supported)
   - pwd
   - mkdir
   - rmdir
