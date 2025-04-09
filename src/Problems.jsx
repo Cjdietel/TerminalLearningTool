@@ -1,10 +1,14 @@
 import { getRandomWord } from './utils';
+import { loadWordList } from './getWordList';
 import config from './config.json';
 
 
-const wordListResponse = await fetch(config.wordList);
-const wordListText = await wordListResponse.text();
-const wordList = wordListText.split("\n").map(word => word.trim()).filter(Boolean)
+let wordList = [];
+
+export async function init() {
+  // Load the word list asynchronously.
+  wordList = await loadWordList();
+}
 
 /**
  * Recursively traverses the file system to collect file and directory paths.
