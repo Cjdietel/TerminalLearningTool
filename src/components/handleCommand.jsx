@@ -8,9 +8,7 @@ for (const path in commandModules) {
     .pop()
     .replace('.jsx', '');
   const commandFunc = module.default;
-  const commandVarName = `${fileName}Command`;
   commands[fileName] = commandFunc;
-  console.log(commandVarName)
 }
 
 
