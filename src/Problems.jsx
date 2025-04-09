@@ -112,16 +112,16 @@ function generateProblems(fs) {
       problemType: 4
     });
   });
-  // For directory deletion:
-  directories.forEach((dir) => {
-    problems.push({
-      problemText: `Remove the directory '${dir}'`,
-      isComplete: false,
-      points: 4,
-      answer: dir,
-      problemType: 4
-    });
-  });
+  // // For directory deletion:
+  // directories.forEach((dir) => {
+  //   problems.push({
+  //     problemText: `Remove the directory '${dir}'`,
+  //     isComplete: false,
+  //     points: 4,
+  //     answer: dir,
+  //     problemType: 4
+  //   });
+  // });
 
   return shuffleArray(problems);
 }
