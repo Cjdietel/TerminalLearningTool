@@ -316,9 +316,10 @@ const touch = (newFileName) => {
       <div style={{ width: "70%", height: "100%", flexGrow: "0" }}>
         {currentDirectory && (
           <Terminal
-          setCurrentDirectory={setCurrentDirectory}
+            setCurrentDirectory={setCurrentDirectory}
             currentDirectory={currentDirectory}
             currentPath={currentPath}
+            setCurrentPath={setCurrentPath}
             currentProblemIndex={currentProblemIndex}
             setCurrentProblemIndex={setCurrentProblemIndex}
             userName={userName}

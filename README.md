@@ -51,7 +51,6 @@ ShellSim is an interactive web-based Linux terminal built to help students learn
   - ⬆️ / ⬇️ Arrow keys cycle command history
   - __Tab__ for autocompletion (file/folder names)
   - __Enter__ executes the command
-  - ___Ctrl + L___ clears the screen (via ___clear___ command)
 ---
 
 ## 🛠️ Tech Stack
@@ -60,6 +59,8 @@ ShellSim is an interactive web-based Linux terminal built to help students learn
 - **JavaScript** — Core logic and problem evaluation  
 - **Canvas-Confetti** — Celebration animations  
 - **CSS** — Terminal-style theming  
+- **Material UI** — UI package for login popup
+- **Primereact** — UI package for file system hierarchy           visualization
 
 ---
 
@@ -81,3 +82,22 @@ npm install
 ```
 npm start
 ```
+---
+## ✏️ Customization for Instructors
+
+ShellSim is designed to be modified based off of the specific needs of an instructor. To achieve this, adding new commands is straightforward. All commands are stored as __.jsx__ files in __src/commands__. Instructors can create their own commands wrapped in the following format:
+```js
+const exampleCommand = (args, { example, pass_state_here }) => {
+    // code goes here
+    }
+  export default exampleCommand;
+```
+
+The following state can be passed through commands and used to help you in problem integration:
+- __currentPath__ — retrieve the path of the current working directory
+- __setCurrentPath__ — set the working directory path
+- __currentDirectory__ — retrieve the current working directory name
+- __setCurrentDirectory__ — set which directory is currently active
+- __createOutput__ — push an output to the terminal for display
+
+Once the function is created in a .jsx file, it must be saved with the name of the function that is desired to be called. For example, __ls__ is stored in __ls.jsx__. Once the file is loaded into __src/commands__, __handleCommands.jsx__ will automatically load it into ShellSim.
