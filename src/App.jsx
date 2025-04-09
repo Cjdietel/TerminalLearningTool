@@ -170,43 +170,46 @@ useEffect(() => {
 
   // console.log(fs)
   const cd = (newDirString) => {
-    try {
-      const newDir = currentDirectory[newDirString];
-      // console.log(newDir)
-      if (newDirString === "..") {
-        if (currentPath !== "/") {
-          const pathArray = currentPath.split("/").filter(Boolean);
-          // console.log(pathArray)
-          pathArray.pop();
-          const newPath = pathArray.length ? `/${pathArray.join("/")}` : "/";
-          setCurrentPath(newPath);
-          if (newPath === "/") {
-            setCurrentDirectory(fs);
-          } else {
-            const newDirectory = getDirectoryFromPath(newPath);
-            setCurrentDirectory(newDirectory.content);
-          }
+
+    const pathIsAbsolute = newDirString.startsWith("/");
+    let workingDirectory = pathIsAbsolute ? fs : currentDirectory;
+    let workingPathTokens = pathIsAbsolute ? [] : currentPath.split("/").filter(Boolean);
+    const tokens = newDirString.split("/").filter(token => token.length > 0);
+
+    for (let token of tokens) {
+      if (token === ".") {
+        continue;
+      }
+      else if (token === "..") {
+        if (workingPathTokens.length > 0) {
+          workingPathTokens.pop();
+          let newPathString = workingPathTokens.length ? `/${workingPathTokens.join("/")}` : "/";
+          workingDirectory = newPathString === "/" ? fs : getDirectoryFromPath(newPathString).content;
         } else {
           addOutput("Already at root directory.");
+          return;
         }
       }
-      else if (newDirString === "~") {
-        setCurrentPath("/"); 
-        setCurrentDirectory(fs); 
-      }
-      else if (newDir.is_file === false) {
-        // console.log(newDir.name)
-        const newPath = currentPath === "/" ? `/${newDirString}` : `${currentPath}/${newDirString}`;
-        setCurrentPath(newPath);
-       
-        setCurrentDirectory(newDir.content);
+      else if (token === "~") {
+        workingDirectory = fs;
+        workingPathTokens = [];
       } else {
-        addOutput(`No such directory: ${newDirString}`);
+        const nextDir = workingDirectory[token];
+        if (nextDir && nextDir.is_file === false) {
+          workingPathTokens.push(token);
+          workingDirectory = nextDir.content;
+        }
+        else {
+          addOutput(`No such directory: ${token}`);
+          return;
+        }
       }
-    } catch (err) {
-      addOutput(`No such directory: ${newDirString}`);
     }
-    
+
+    const newPathString = workingPathTokens.length ? `/${workingPathTokens.join("/")}` : "/";
+    setCurrentPath(newPathString);
+    setCurrentDirectory(workingDirectory);
+
   };
 
   const mkdir = (newDir) => {
