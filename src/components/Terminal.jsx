@@ -17,7 +17,8 @@ const Terminal = (props) => {
     setOutput, 
     setCurrentDirectory, 
     mkdir, 
-    rmdir, 
+    rmdir,
+    rm, 
     touch, 
     echo,
     fs,
@@ -61,6 +62,7 @@ const Terminal = (props) => {
         setCurrentDirectory,
         mkdir,
         rmdir,
+        rm,
         touch,
         echo,
         fs

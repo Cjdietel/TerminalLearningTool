@@ -245,7 +245,20 @@ useEffect(() => {
     setFSChange(prev => prev + 1);
   }
 
-  const touch = (newFileName) => {
+  const rm = (fileToDelete) => {
+    if (currentDirectory[fileToDelete]) {
+      delete currentDirectory[fileToDelete]
+      // console.log('1')
+    }
+    else {
+      addOutput(`File does not exist: ${fileToDelete}`)
+      // console.log('0')
+    }
+    setFSChange(prev => prev + 1);
+  }
+
+  
+const touch = (newFileName) => {
     console.log(newFileName)
     if (!currentDirectory[newFileName]) {
       currentDirectory[newFileName] = {
@@ -265,6 +278,8 @@ useEffect(() => {
     }
     setFSChange(prev => prev + 1);
   }
+
+
 
   const echo = (text, operator, file) => {
     if (operator === '>') {
@@ -314,6 +329,7 @@ useEffect(() => {
             setOutput={setOutput}
             mkdir={mkdir}
             rmdir={rmdir}
+            rm={rm}
             touch={touch}
             echo={echo}
             fs={fs}
