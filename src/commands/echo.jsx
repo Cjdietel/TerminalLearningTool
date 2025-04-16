@@ -4,6 +4,9 @@ const echoCommand = (args, { echo, addOutput }) => {
     } else if (args.length >= 3) {
       echo(args[0].replace(/['"]+/g, ''), args[1], args[2]);
     }
+    else {
+      addOutput('Invalid number of arguments. use "man echo" for more usage information.');
+    }
   };
   
   export const echoMan = () => `
