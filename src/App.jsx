@@ -259,7 +259,7 @@ useEffect(() => {
 
   
 const touch = (newFileName) => {
-    // console.log(newFileName)
+    console.log(newFileName)
     if (!currentDirectory[newFileName]) {
       currentDirectory[newFileName] = {
         content: "",
@@ -267,7 +267,7 @@ const touch = (newFileName) => {
         is_file: true,
         is_hidden: newFileName.startsWith('.'),
         permissions: {
-          read: true,
+          read: false,
           write: true,
           execute: false
         }
@@ -282,20 +282,14 @@ const touch = (newFileName) => {
 
 
   const echo = (text, operator, file) => {
-    // console.log(text, operator, file)
     if (operator === '>') {
-      touch(file) // create the file if it doesn't exist
+      // console.log(file)
       currentDirectory[file].content = text
       currentDirectory[file].date_modified = Date()
     }
     else if (operator === '>>') {
-      touch(file) // create the file if it doesn't exist
       currentDirectory[file].content += text
       currentDirectory[file].date_modified = Date()
-    }
-    else
-    {
-      addOutput('Invalid operator. Use > or >>')
     }
   }
 
