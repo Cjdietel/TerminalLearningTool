@@ -26,6 +26,8 @@ function App() {
   const [showPopup, setShowPopup] = useState(true);
   const [fsChange, setFSChange] = useState(0);
 
+  const reservedDirWords = ["bin", "etc", "usr", "var", "home", "root", "tmp", "sbin", "opt", "user"];
+
   init()
   window.onbeforeunload = function() {
     return "Data will be lost if you leave the page, are you sure?";
@@ -57,79 +59,71 @@ function App() {
                 const wordListText = await wordListResponse.text();
                 const wordList = wordListText.split("\n").map(word => word.trim()).filter(Boolean);
 
-                zip.forEach(function (path, entry) {
-                    let filePathArray = entry.name.endsWith('/')
-                        ? entry.name.slice(0, -1).split('/')
-                        : entry.name.split('/');
+                zip.forEach((path, entry) => {
+  // 1) strip trailing slash, split, then drop first folder
+                    const allParts = entry.name.replace(/\/$/, "").split("/");
+                    const parts    = allParts.slice(1);
+                    if (parts.length === 0) return;  // ignore the top‐level wrapper
 
-                    let currentLevel = fs.content;
-                    for (let i = 0; i < filePathArray.length; i++) {
-                        let originalName = filePathArray[i];
-
-                        // Generate a random name for both files and directories
-                        let randomName;
-                        if (!nameMapping[originalName]) {
-                            nameMapping[originalName] = getRandomWord(wordList);
-                        }
-                        randomName = nameMapping[originalName];
-
-                        // Check if it's the last item in the path (the file or directory itself)
-                        const isLastItem = i === filePathArray.length - 1;
-                        const isHidden = originalName.startsWith(".");
-
-                        if (isLastItem) {
-                            if (entry.dir) {
-                                // Directory
-                                if (!currentLevel[randomName]) {
-                                    currentLevel[randomName] = {
-                                        content: {},
-                                        date_modified: new Date().toISOString(),
-                                        is_file: false, // Mark it as a directory
-                                        is_hidden: isHidden,
-                                        permissions: {
-                                            read: true,
-                                            write: true,
-                                            execute: true
-                                        }
-                                    };
-                                }
-                            } else {
-                                // File
-                                const filePromise = entry.async("string").then((content) => {
-                                    currentLevel[randomName] = {
-                                        content: content,
-                                        date_modified: new Date().toISOString(),
-                                        is_file: true, // Mark it as a file
-                                        is_hidden: isHidden,
-                                        permissions: {
-                                            read: true,
-                                            write: true,
-                                            execute: true
-                                        }
-                                    };
-                                });
-                                promises.push(filePromise);
-                            }
-                        } else {
-                            // Ensure the directory structure exists
-                            if (!currentLevel[randomName]) {
-                                currentLevel[randomName] = {
-                                    content: {},
-                                    date_modified: new Date().toISOString(),
-                                    is_file: false, // It's an intermediate directory
-                                    is_hidden: isHidden,
-                                    permissions: {
-                                        read: true,
-                                        write: true,
-                                        execute: true
-                                    }
-                                };
-                            }
-                            currentLevel = currentLevel[randomName].content;
-                        }
+                    let level = fs.content;
+                    for (let i = 0; i < parts.length; i++) {
+                      const originalName = parts[i];
+                    let mappedName;
+                
+                    // 1) if it's the special "user" folder, use the entered userName
+                    if (originalName === "user") {
+                      mappedName = userName;
                     }
+                    // 2) else if it’s a reserved dir, keep it
+                    else if (reservedDirWords.includes(originalName)) {
+                      mappedName = originalName;
+                    }
+                    // 3) otherwise randomize as before
+                    else {
+                      if (!nameMapping[originalName]) {
+                        nameMapping[originalName] = getRandomWord(wordList);
+                      }
+                      mappedName = nameMapping[originalName];
+                    }
+                
+                    const isLast = i === parts.length - 1;
+                    const isHidden = originalName.startsWith(".");
+                
+                    if (isLast) {
+                      if (entry.dir) {
+                        level[mappedName] = level[mappedName] || {
+                          content: {},
+                          date_modified: new Date().toISOString(),
+                          is_file: false,
+                          is_hidden: isHidden,
+                          permissions: { read: true, write: true, execute: true }
+                        };
+                      } else {
+                        promises.push(
+                          entry.async("string").then(text => {
+                            level[mappedName] = {
+                              content: text,
+                              date_modified: new Date().toISOString(),
+                              is_file: true,
+                              is_hidden: isHidden,
+                              permissions: { read: true, write: true, execute: true }
+                            };
+                          })
+                        );
+                      }
+                    } else {
+                      level[mappedName] = level[mappedName] || {
+                        content: {},
+                        date_modified: new Date().toISOString(),
+                        is_file: false,
+                        is_hidden: isHidden,
+                        permissions: { read: true, write: true, execute: true }
+                      };
+                      level = level[mappedName].content;
+                    }
+                  }
                 });
-
+                                
                 Promise.all(promises)
                     .then(() => resolve(fs))
                     .catch(reject);
@@ -144,13 +138,14 @@ useEffect(() => {
   createFSObject()
     .then((fileSystem) => {
       setFs(fileSystem.content);
+      console.log(fileSystem.content);
       setCurrentDirectory(fileSystem.content);
       setProblems(generateProblems(fileSystem.content));
     })
     .catch((error) => {
       addOutput(`Error creating file system object: ${error.message}`);
     });
-}, []);
+}, [userName]);
 
   // useEffect(() => {
   // }, [fsChange]);
