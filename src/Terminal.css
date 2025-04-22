@@ -11,13 +11,15 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
 }
 
-.output {
-    white-space: pre-wrap; /* Allow newlines and wrap content */
-    overflow-wrap: break-word; /* Break long words when needed */
-    padding: 0.5em;
-}
+/* .output {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    padding-bottom: 0.5em;
+} */
 
 .input-container {
     display: flex;
@@ -33,5 +35,6 @@
     font-size: 1em;
     overflow-wrap: break-word;
     white-space: pre-wrap;
-    resize: none;  /* Prevent resizing the textarea */
+    word-break: break-word;
+    overflow: hidden;
 }
