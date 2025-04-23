@@ -12,7 +12,7 @@ import ProblemPanel from './components/ProblemPanel';
 import FSTree from './components/FSTree'
 import { init, generateProblems } from './Problems';
 import UsernamePopup from './components/UsernamePopup';
-import { getRandomWord } from './utils';
+import { getRandomWord } from './utils/getRandomWord';
 
 
 function App() {

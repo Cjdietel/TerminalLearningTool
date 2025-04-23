@@ -1,4 +1,4 @@
-import { getRandomWord } from './utils';
+import { getRandomWord } from './utils/getRandomWord';
 import { loadWordList } from './getWordList';
 import config from './config.json';
 
