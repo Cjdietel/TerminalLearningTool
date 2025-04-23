@@ -164,49 +164,49 @@ useEffect(() => {
   };
 
   // console.log(fs)
-  const cd = (newDirString) => {
-
-    const pathIsAbsolute = newDirString.startsWith("/");
-    let workingDirectory = pathIsAbsolute ? fs : currentDirectory;
-    let workingPathTokens = pathIsAbsolute ? [] : currentPath.split("/").filter(Boolean);
-    const tokens = newDirString.split("/").filter(token => token.length > 0);
-
-    for (let token of tokens) {
-      if (token === ".") {
-        continue;
-      }
-      else if (token === "..") {
-        if (workingPathTokens.length > 0) {
-          workingPathTokens.pop();
-          let newPathString = workingPathTokens.length ? `/${workingPathTokens.join("/")}` : "/";
-          workingDirectory = newPathString === "/" ? fs : getDirectoryFromPath(newPathString).content;
-        } else {
-          addOutput("Already at root directory.");
-          return;
-        }
-      }
-      else if (token === "~") {
-        workingDirectory = fs;
-        workingPathTokens = [];
+  const cd = (inputPath) => {
+    // 1) Turn it into an absolute path
+    let target;
+    if (inputPath.startsWith("/")) {
+      target = inputPath;
+    } else if (inputPath.startsWith("~")) {
+      // assume your home is /home/<userName>
+      target = `/home`;
+    } else {
+      target = currentPath === "/"
+        ? `/${inputPath}`
+        : `${currentPath}/${inputPath}`;
+    }
+  
+    // 2) Normalize ".." and "." with a simple stack
+    const segments = target.split("/").filter(Boolean);
+    const stack = [];
+    for (const seg of segments) {
+      if (seg === "." || seg === "") continue;
+      if (seg === "..") {
+        if (stack.length) stack.pop();
+        // else we’re already at root—ignore extra ".."
       } else {
-        const nextDir = workingDirectory[token];
-        if (nextDir && nextDir.is_file === false) {
-          workingPathTokens.push(token);
-          workingDirectory = nextDir.content;
-        }
-        else {
-          addOutput(`No such directory: ${token}`);
-          return;
-        }
+        stack.push(seg);
       }
     }
-
-    const newPathString = workingPathTokens.length ? `/${workingPathTokens.join("/")}` : "/";
-    setCurrentPath(newPathString);
-    setCurrentDirectory(workingDirectory);
-
+  
+    // 3) Walk the tree only once
+    let dirMap = fs;   // fs is your root content map
+    for (const seg of stack) {
+      const node = dirMap[seg];
+      if (!node || node.is_file) {
+        addOutput(`No such directory: ${seg}`);
+        return;
+      }
+      dirMap = node.content;
+    }
+  
+    // 4) Update state
+    setCurrentDirectory(dirMap);
+    setCurrentPath(stack.length ? `/${stack.join("/")}` : "/");
   };
-
+  
   const mkdir = (newDir) => {
     if (!currentDirectory[newDir]) {
       currentDirectory[newDir] = {
