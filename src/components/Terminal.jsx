@@ -48,6 +48,7 @@ const Terminal = (props) => {
 
   const handleInput = (e) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       const command = input.trim();
       addOutput(`(${userName}@ShellSim)-[${currentPath}]$ ${command}`);
       setHistory([...history, command]);
@@ -108,27 +109,35 @@ const Terminal = (props) => {
     }
   }, [lastCommand]);
 
+  // after your handleInput, before return:
+  useEffect(() => {
+    const ta = inputRef.current;
+    if (!ta) return;
+    ta.style.height = 'auto';
+    ta.style.height = `${ta.scrollHeight}px`;
+  }, [input]);
+  
+
+
   return (
     <div className="terminal">
-      <div className="output" >
-        {output.map((line, index) => (
-          <div key={index}>{line}</div>
-        ))}
-      </div>
-      <div className="input-container">
-        <div style={{ paddingRight: "0.5em" }}>{`(${userName}@ShellSim)-[${currentPath}]$`}</div>
-        <div style={{ overflowWrap: "anywhere", flexGrow: "1" }}>
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleInput}
-            ref={inputRef}
-            className="input"  
-            autoFocus={true}          
-          />
-        </div>
-      </div>
+<div className="output">
+  {output.map((line,i) => <div key={i}>{line}</div>)}
+</div>
+<div className="input-container">
+  <div className="prompt">
+    {`(${userName}@ShellSim)-[${currentPath}]$`}
+  </div>
+  <textarea
+    rows={1}
+    className="cmd-input"
+    value={input}
+    onChange={e => setInput(e.target.value)}
+    onKeyDown={handleInput}
+    ref={inputRef}
+    autoFocus
+  />
+</div>
     </div>
   );
 };

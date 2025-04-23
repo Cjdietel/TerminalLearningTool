@@ -89,7 +89,7 @@ function App() {
                     const isLast = i === parts.length - 1;
                     const isHidden = originalName.startsWith(".");
                 
-                    if (isLast) {
+                    if (isLast)  {
                       if (entry.dir) {
                         level[mappedName] = level[mappedName] || {
                           content: {},
@@ -229,16 +229,39 @@ useEffect(() => {
   }
 
   const rmdir = (dirToDelete) => {
-    if (currentDirectory[dirToDelete]) {
-      delete currentDirectory[dirToDelete]
-      // console.log('1')
+    const node = currentDirectory[dirToDelete];
+    if (!node) {
+      addOutput(`Directory does not exist: ${dirToDelete}`);
+      return;
     }
-    else {
-      addOutput(`Directory does not exist: ${dirToDelete}`)
-      // console.log('0')
+    if (node.is_file) {
+      addOutput(`Not a directory: ${dirToDelete}`);
+      return;
     }
+    const isEmpty = 
+      node.content && 
+      Object.keys(node.content).length === 0;
+  
+    if (!isEmpty) {
+      addOutput(`Directory not empty: ${dirToDelete}`);
+      return;
+    }
+    delete currentDirectory[dirToDelete];
     setFSChange(prev => prev + 1);
-  }
+  };
+  
+
+  // const rmdir = (dirToDelete) => {
+  //   if (currentDirectory[dirToDelete]) {
+  //     delete currentDirectory[dirToDelete]
+  //     // console.log('1')
+  //   }
+  //   else {
+  //     addOutput(`Directory does not exist: ${dirToDelete}`)
+  //     // console.log('0')
+  //   }
+  //   setFSChange(prev => prev + 1);
+  // }
 
   const rm = (fileToDelete) => {
     if (currentDirectory[fileToDelete]) {

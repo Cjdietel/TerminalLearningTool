@@ -1,40 +1,61 @@
+/* Apply your monospace font everywhere */
 * {
     font-family: 'Ubuntu monospace';
-}
-
-.terminal {
+  }
+  
+  /* The outer container scrolls as needed; no wrapping rules here */
+  .terminal {
     background-color: #041F1E;
     color: #F7DBA7;
-    font-family: 'Ubuntu monospace';
     height: 100%;
     width: 100%;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-}
-
-/* .output {
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    padding-bottom: 0.5em;
-} */
-
-.input-container {
-    display: flex;
+  }
+  
+  /* Only the output pane wraps its text */
+  .output,
+  .output div,
+  .output span,
+  .output pre {
+    white-space: pre-wrap;     /* wrap long lines, but respect real newlines */
+    word-wrap: break-word;     /* break up very long words */
+    overflow-wrap: anywhere;   /* aggressive breaking if needed */
+  }
+  
+  /* Grid the prompt and input so the prompt never moves */
+  .input-container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-auto-rows: min-content;
+    column-gap: 0.5em;
     width: 100%;
-}
-
-.input {
+    align-items: start;
+  }
+  
+  /* Never wrap the literal prompt text */
+  .prompt {
+    white-space: nowrap;
+  }
+  
+  /* Style your textarea exactly like the old input, but let it wrap & grow */
+  .input,
+  .cmd-input {
     background: none;
     border: none;
     color: #F7DBA7;
     outline: none;
     width: 100%;
     font-size: 1em;
-    overflow-wrap: break-word;
+  
+    /* wrapping magic inside the textarea */
     white-space: pre-wrap;
-    word-break: break-word;
+    word-wrap: break-word;
+    overflow-wrap: anywhere;
+  
+    /* auto-resize will be handled in JS; disable manual resize */
+    resize: none;
     overflow: hidden;
-}
+  }
+  
