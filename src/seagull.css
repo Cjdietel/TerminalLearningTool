@@ -1,0 +1,21 @@
+@keyframes fly-across {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100vw); }
+  }
+  
+  .seagull-container {
+    position: relative;
+    width: 100%;
+    height: 100px;
+    overflow: hidden;
+    margin: 0.5em 0;
+  }
+  
+  .seagull {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80px;
+    animation: fly-across 5s linear forwards;
+  }
+  

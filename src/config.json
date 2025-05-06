@@ -1,5 +1,6 @@
 {
     "zippedFolder" : "../fsTemplate.zip",
+    "seagullImage" : "./seagull.png",
     "wordList" : "../name_dictionary.txt",
     "numType1": 2,
     "numType2": 2,
