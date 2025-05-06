@@ -10,6 +10,17 @@ export default function seagullCommand(args, { addOutput }) {
   addOutput(<FlyingSeagull key={id} />);
 }
 
+export const seagullMan = () => `
+    seagull: Caw caw.
+
+    Usage: seagull
+
+    Description: Shhh its a secret.
+
+    Example: seagull
+
+`;
+
 import '../seagull.css';
 
 export function FlyingSeagull() {

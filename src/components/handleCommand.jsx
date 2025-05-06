@@ -1,6 +1,5 @@
 // const commandModules = import.meta.glob('/src/commands/*.jsx', { eager: true });
 // const commands = {}
-
 // for (const path in commandModules) {
 //   const module = commandModules[path];
 //   const fileName = path
